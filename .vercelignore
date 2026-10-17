@@ -1,0 +1,13 @@
+.git
+.openai
+.vercel
+node_modules
+domain.test.cjs
+assistant.test.cjs
+api.test.cjs
+theme.test.cjs
+.env*
+preview.cjs
+VERCEL.md
+*.tar.gz
+*.zip
