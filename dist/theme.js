@@ -8,7 +8,7 @@
     const dark = preference === 'dark' || preference === 'system' && media.matches;
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
     document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#1d2027' : '#fbfbf8');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#111722' : '#f4f6fa');
     document.querySelectorAll('[data-theme-picker]').forEach(select => select.value = preference);
     if (persist) { try { localStorage.setItem(key, preference); } catch {} }
   }

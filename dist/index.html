@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport"
         content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
-    <meta name="theme-color" content="#fbfbf8">
+    <meta name="theme-color" content="#f4f6fa">
     <meta name="description" content="clareza.ai — tarefas, projetos e ideias em um espaço com mais intenção.">
     <title>clareza.ai — meu espaço</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -13,14 +13,16 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="organization.css">
     <link rel="stylesheet" href="brand.css">
+    <link rel="stylesheet" href="workspace.css">
 </head>
 
 <body>
-    <aside id="sidebar"><a class="brand" href="#today" aria-label="clareza.ai, início"><span
-                class="brand-mark" aria-hidden="true"><svg viewBox="0 0 36 36" fill="currentColor"><g transform="rotate(-15 18 18)"><rect x="6" y="8" width="6" height="21" rx="3"/><rect x="15" y="4" width="6" height="29" rx="3"/><rect x="24" y="11" width="6" height="15" rx="3"/></g></svg></span><span class="brand-name">clareza<span class="brand-ai">.ai</span></span></a><div class="workspace-tag"><span class="workspace-tag-icon">P</span><span>Meu espaço pessoal</span><span class="workspace-tag-dot"></span></div><button id="command-open"
-            class="search-trigger"><span data-icon="search"></span>Buscar no espaço<kbd>Ctrl K</kbd></button>
+    <a class="skip-link" href="#view">Ir para o conteúdo</a>
+    <aside id="sidebar" aria-label="Barra lateral"><div class="sidebar-top"><a class="brand" href="#today" aria-label="clareza.ai, início"><span
+                class="brand-mark" aria-hidden="true"><svg viewBox="0 0 36 36" fill="currentColor"><g transform="rotate(-15 18 18)"><rect x="6" y="8" width="6" height="21" rx="3"/><rect x="15" y="4" width="6" height="29" rx="3"/><rect x="24" y="11" width="6" height="15" rx="3"/></g></svg></span><span class="brand-name">clareza<span class="brand-ai">.ai</span></span></a><button id="sidebar-collapse" class="icon-button" aria-label="Recolher barra lateral" aria-expanded="true" title="Recolher barra lateral"><span data-icon="left"></span></button></div><div class="workspace-tag"><span class="workspace-tag-icon">P</span><span>Meu espaço pessoal</span><span class="workspace-tag-dot"></span></div><button id="command-open"
+            class="search-trigger"><span data-icon="search"></span><span class="search-label">Buscar no espaço</span><kbd>Ctrl K</kbd></button>
         <div class="nav-label">NAVEGAÇÃO</div>
-        <nav id="navigation"></nav>
+        <nav id="navigation" aria-label="Navegação principal"></nav>
         <div class="sidebar-section area-sidebar">
             <div class="area-sidebar-heading"><button id="areas-toggle" class="nav-label" aria-expanded="true"
                     aria-controls="area-nav">ÁREAS DA VIDA <span data-icon="down"></span></button><button
@@ -37,13 +39,13 @@
             <div class="nav-label">FAVORITOS</div>
             <div id="page-nav"></div>
         </div>
-        <div class="sidebar-bottom"><button id="settings-open" class="nav-item"><span data-icon="settings"></span>Meu
-                espaço e dados</button>
+        <div class="sidebar-bottom"><button id="settings-open" class="nav-item"><span data-icon="settings"></span><span>Meu espaço e dados</span></button>
             <div class="profile"><span class="avatar">EU</span>
                 <div>Espaço pessoal<small>Salvo neste navegador</small></div><span class="local-dot"></span>
             </div>
         </div>
     </aside>
+    <button id="sidebar-backdrop" class="sidebar-backdrop" aria-label="Fechar menu" tabindex="-1" hidden></button>
     <main>
         <header><button id="mobile-menu" class="icon-button" aria-label="Abrir menu" aria-expanded="false"><span
                     data-icon="menu"></span></button>
@@ -52,7 +54,7 @@
                     id="quick-create" class="icon-button" aria-label="Criar tarefa"><span
                         data-icon="plus"></span></button></div>
         </header>
-        <div id="view" class="view"></div>
+        <div id="view" class="view" tabindex="-1"></div>
     </main>
     <dialog id="entity-dialog">
         <form id="entity-form">
@@ -97,6 +99,7 @@
     <script src="domain.js"></script>
     <script src="app.js"></script>
     <script src="organization.js"></script>
+    <script src="shell.js"></script>
     <script src="assistant-core.js"></script>
     <script src="assistant.js"></script>
 </body>
