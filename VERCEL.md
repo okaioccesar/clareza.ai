@@ -46,4 +46,6 @@ npm run build
 
 Após publicar, confira a tela inicial, os arquivos CSS/JS e as rotas `/#space` e `/#inbox`.
 
+A etapa de contas foi verificada em produção com duas contas temporárias, sem envio de e-mails: login real no Supabase, escrita e leitura pela API publicada, isolamento entre contas, proprietário forjado, revisão desatualizada, idempotência, token inválido e origem externa. As contas e seus dados foram removidos após o teste. A análise de segurança do Supabase não retornou alertas. O cadastro e a recuperação por e-mail ainda dependem da configuração Auth/SMTP; esse fluxo de e-mail não foi validado. Não houve inspeção visual em navegador nesta etapa.
+
 A atualização com tema escuro e assistente foi publicada como `dpl_Cen7VPNQawLKK9hzoSZEAKVkqws2`, com status `READY` e os aliases de produção confirmados. Os 24 testes passaram; a integração do provedor foi testada com respostas simuladas. Uma resposta real da IA online ainda não foi verificada. A inspeção visual está bloqueada pela política do navegador deste ambiente, e a leitura dos logs retornou 403; não há CLI Vercel instalado para a alternativa autenticada.

@@ -21,8 +21,8 @@ async function boot(t,{guest=empty(),signedIn=false,cache=null,offline=false}={}
       if(input.revision!==remote.revision)return {ok:false,status:409,json:async()=>({...remote,status:'conflict',user:session.user})};
       remote.revision++;remote.data=input.data;return {ok:true,status:200,json:async()=>({status:'ok',revision:remote.revision,user:session.user})};
     }
-    if(holdGet)await holdGet;
-    return {ok:true,status:200,json:async()=>({...remote,user:session.user})};
+    const snapshot=JSON.parse(JSON.stringify(remote));if(holdGet)await holdGet;
+    return {ok:true,status:200,json:async()=>({...snapshot,user:session.user})};
   };
   const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','workspace-core.js','workspace.js','assistant-core.js','assistant.js','sync-core.js','cloud.js'];
   for(const file of scripts)vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),dom.getInternalVMContext(),{filename:file});
@@ -75,4 +75,12 @@ test('uma sessão de outra conta não pode receber alterações da conta anterio
 test('recuperação mantém o formulário de nova senha visível depois de carregar a conta',async t=>{
   const app=await boot(t);app.auth('PASSWORD_RECOVERY',session);await tick();await tick();
   assert.equal(app.$('#account-auth').hidden,false);assert.equal(app.$('#account-email-label').hidden,true);assert.equal(app.$('#account-submit').textContent,'Salvar nova senha');assert.equal(app.$('#account-dialog').open,true);
+});
+
+test('uma leitura antiga não substitui alterações já sincronizadas durante a espera',async t=>{
+  const app=await boot(t,{signedIn:true}),release=app.hold('GET');
+  app.w.document.dispatchEvent(new app.w.Event('visibilitychange'));await tick();
+  app.add('Alteração mais recente');await app.sync();assert.equal(app.remote.revision,1);
+  release();await tick();assert.equal(app.data().tasks[0].title,'Alteração mais recente');
+  assert.equal(JSON.parse(app.w.localStorage.getItem(key+'.account.'+uid)).revision,1);
 });

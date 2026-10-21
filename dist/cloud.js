@@ -118,10 +118,10 @@
     if(!account||connecting||flight||conflict)return;
     if(dirty){await flush();return;}
     if(editing()||navigator.onLine===false)return;
-    const current=generation;
+    const current=generation,readRevision=revision,readData=lastData;
     try{
       const active=await freshSession(),remote=await callApi('GET',undefined,active);
-      if(current!==generation||dirty||editing())return;
+      if(current!==generation||dirty||editing()||flight||revision!==readRevision||lastData!==readData)return;
       if(remote.revision!==revision){state=remote.data?D.normalize(remote.data):S.empty();revision=remote.revision;lastData=JSON.stringify(state);writeId=D.id();persist();render();}
       setPhase('clean');
     }catch(error){if(current===generation)setPhase(error.status===401?'expired':'offline');}
