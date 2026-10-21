@@ -6,7 +6,7 @@ Projeto `clareza`, identificado por `prj_dT2lPV1cyKj9LnUGX2FluUl426JR`. O domín
 
 A liberação foi verificada sem cookies ou credenciais: a raiz de produção retornou HTTP 200 com o HTML do aplicativo; `/api/chat` retornou HTTP 200 com `configured: false`; o endereço único do deployment redirecionou para autenticação. Os relatos de inspeção bloqueada nas publicações antigas, abaixo, são históricos.
 
-A interface usa `dist/`; a função `api/chat.js` atende a IA online. Não há dependências de execução; o jsdom é usado apenas nos testes de desenvolvimento. A navegação usa fragmentos (`/#space`, `/#today`), portanto não necessita de regra de redirecionamento de rotas.
+A interface usa `dist/`; as funções TypeScript `api/config.ts` e `api/workspace.ts` atendem contas e sincronização, e `api/chat.js` atende a IA online. O cliente e o servidor usam `@supabase/supabase-js`. A navegação usa fragmentos (`/#space`, `/#today`), portanto não necessita de regra de redirecionamento de rotas.
 
 ## Assistente e aparência
 
@@ -18,7 +18,9 @@ O modo online envia mensagem, títulos, prazos, prioridades, nomes de áreas/pro
 
 ## Publicação
 
-Use esta pasta (`clareza`) como raiz do projeto. O arquivo `vercel.json` define o preset Other e a pasta de saída `dist`, sem etapa de instalação ou construção.
+Use esta pasta (`clareza`) como raiz do projeto. O arquivo `vercel.json` define o preset Other, `npm ci`, `npm run build` e a pasta de saída `dist`. O build gera `cloud-client.js`; esse arquivo não é versionado. O runtime é Node.js 24.
+
+As variáveis `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` estão configuradas em produção. `/api/config` publica apenas esses valores públicos; a API valida o token de cada usuário e o banco aplica RLS. Não configure chave `service_role`. As prévias sem essas variáveis funcionam no modo local.
 
 Pelo terminal, com a conta já autenticada:
 
@@ -30,12 +32,16 @@ Antes de confirmar o destino, confira a conta, o projeto e a proteção de acess
 
 ## Seus dados
 
-As tarefas e notas permanecem no armazenamento local do navegador. No endereço antigo, abra **Meu espaço e dados → Exportar meu espaço**. No novo endereço, use **Meu espaço e dados → Importar uma cópia**. A mudança de hospedagem não adiciona login nem sincronização de dados.
+Sem login, tarefas e notas permanecem no armazenamento local do navegador. Uma conta sincroniza seu próprio espaço; a importação dos dados locais é explícita. Para transferir dados de outro domínio, abra **Meu espaço e dados → Exportar meu espaço** no endereço antigo e **Importar uma cópia** no destino.
+
+Antes de abrir o cadastro público, conclua a configuração de URL e SMTP descrita em [supabase/README.md](supabase/README.md). O conector utilizado não oferece alteração da configuração Auth. Mantenha a confirmação de e-mail habilitada.
 
 ## Verificação
 
 ```text
-node --test domain.test.cjs assistant.test.cjs api.test.cjs theme.test.cjs
+npm test
+npm run typecheck
+npm run build
 ```
 
 Após publicar, confira a tela inicial, os arquivos CSS/JS e as rotas `/#space` e `/#inbox`.
