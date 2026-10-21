@@ -1,0 +1,7 @@
+const test=require('node:test'),assert=require('node:assert/strict'),D=require('./dist/domain.js'),S=require('./dist/sync-core.js');
+const data=title=>D.normalize({tasks:title?[{id:'a',title}]:[]});
+test('conta vazia é separada dos dados locais e não importa automaticamente',()=>{assert.deepEqual(S.reconcile({revision:0,data:null},null).data,S.empty());assert.equal(S.hasContent(data('local')),1)});
+test('alterações offline são mantidas quando a versão remota não avançou',()=>{const local={data:data('local'),revision:2,dirty:true};const result=S.reconcile({revision:2,data:data('cloud')},local);assert.equal(result.data.tasks[0].title,'local');assert.equal(result.dirty,true);assert.equal(result.conflict,false)});
+test('conflito mantém cópia local sem sobrescrever uma versão remota nova',()=>{const local={data:data('local'),revision:2,dirty:true};const result=S.reconcile({revision:3,data:data('cloud')},local);assert.equal(result.conflict,true);assert.equal(result.data.tasks[0].title,'local');assert.equal(result.revision,2)});
+test('resposta perdida é reconhecida ao reencontrar os mesmos dados na conta',()=>{const local={data:data('igual'),revision:2,dirty:true};const result=S.reconcile({revision:3,data:data('igual')},local);assert.equal(result.conflict,false);assert.equal(result.dirty,false);assert.equal(result.revision,3)});
+test('cache incompleto não é tratado como espaço válido',()=>{assert.throws(()=>S.parseCache('{'));assert.throws(()=>S.parseCache(JSON.stringify({format:1,revision:-1})));assert.equal(S.parseCache(null),null)});

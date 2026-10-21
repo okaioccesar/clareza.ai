@@ -39,9 +39,9 @@
             <div class="nav-label">FAVORITOS</div>
             <div id="page-nav"></div>
         </div>
-        <div class="sidebar-bottom"><button id="settings-open" class="nav-item"><span data-icon="settings"></span><span>Meu espaço e dados</span></button>
+        <div class="sidebar-bottom"><button id="account-open" class="nav-item" title="Entrar ou criar conta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg><span id="account-button-label">Entrar ou criar conta</span></button><button id="settings-open" class="nav-item"><span data-icon="settings"></span><span>Meu espaço e dados</span></button>
             <div class="profile"><span class="avatar">EU</span>
-                <div>Espaço pessoal<small>Salvo neste navegador</small></div><span class="local-dot"></span>
+                <div><span id="profile-name">Espaço pessoal</span><small id="profile-status">Salvo neste navegador</small></div><span class="local-dot"></span>
             </div>
         </div>
     </aside>
@@ -54,6 +54,7 @@
                     id="quick-create" class="icon-button" aria-label="Criar tarefa"><span
                         data-icon="plus"></span></button></div>
         </header>
+        <div id="sync-banner" class="sync-banner" role="status" hidden><span id="sync-banner-text"></span><button id="sync-banner-action" class="text-button">Ver minha conta</button></div>
         <div id="view" class="view" tabindex="-1"></div>
     </main>
     <dialog id="entity-dialog">
@@ -78,14 +79,31 @@
         <div class="dialog-top"><span class="overline">SEU ESPAÇO</span><button class="icon-button" data-close
                 aria-label="Fechar configurações"><span data-icon="x"></span></button></div>
         <h2>Seus dados, com você.</h2>
-        <p class="muted">Tarefas, projetos e páginas são salvos neste navegador. Exporte uma cópia para guardar ou levar
-            para outro dispositivo.</p>
+        <p class="muted">Exporte uma cópia de tarefas, projetos e páginas. Entre na sua conta para sincronizar entre dispositivos; o modo local continua disponível.</p>
         <div class="settings-actions"><button class="button primary" id="export"><span
                     data-icon="download"></span>Exportar meu espaço</button><button class="button secondary"
                 id="import"><span data-icon="upload"></span>Importar uma cópia</button><input id="import-file"
                 type="file" accept="application/json,.json" hidden></div>
-        <p class="small muted">A importação adiciona novos registros e preserva os existentes. Login e sincronização
-            online ainda não estão disponíveis.</p>
+        <p class="small muted">A importação adiciona novos registros e preserva os existentes. Você decide quando trazer os dados locais para a sua conta.</p>
+    </dialog>
+    <dialog id="account-dialog" class="account-dialog" aria-labelledby="account-title">
+        <div class="dialog-top"><span class="overline">SUA CONTA</span><button class="icon-button" data-close aria-label="Fechar conta"><span data-icon="x"></span></button></div>
+        <h2 id="account-title">Seu espaço, onde você estiver.</h2>
+        <p class="account-intro muted">Entre para guardar suas tarefas na conta e continuar em outro dispositivo.</p>
+        <p id="account-message" class="account-message" role="status" aria-live="polite"></p>
+        <section id="account-signed-in" hidden>
+            <p class="account-email" id="account-email"></p><p id="account-sync-description" class="muted"></p>
+            <div class="account-actions"><button class="button secondary" data-account-action="sync">Sincronizar agora</button><button class="text-button" data-account-action="export">Exportar este espaço</button></div>
+            <section id="account-import" class="account-section" hidden><h3>Trazer o que já está aqui</h3><p id="account-import-description" class="muted"></p><button class="button secondary" data-account-action="import">Importar dados deste navegador</button><p class="small muted">A cópia local será mantida. Registros da conta com o mesmo identificador serão preservados.</p></section>
+            <section id="account-conflict" class="account-section" hidden><h3>Encontramos duas versões</h3><p class="muted">Outro dispositivo salvou alterações. Escolha qual versão continuar usando; guardaremos uma cópia da versão substituída neste navegador.</p><div class="account-actions"><button class="button primary" data-account-action="use-remote">Usar versão da conta</button><button class="button secondary" data-account-action="use-local">Usar minha versão</button></div></section>
+            <section id="account-backup" class="account-section" hidden><button class="text-button" data-account-action="backup">Baixar cópia anterior guardada</button></section>
+            <div class="account-footer"><button class="text-button" data-account-action="reconnect">Entrar novamente</button><button class="text-button danger" data-account-action="logout">Sair desta conta</button></div>
+        </section>
+        <section id="account-auth">
+            <div class="account-tabs" id="account-tabs" role="group" aria-label="Acesso à conta"><button data-auth-mode="signin" aria-pressed="true">Entrar</button><button data-auth-mode="signup" aria-pressed="false">Criar conta</button></div>
+            <form id="account-form"><label id="account-email-label">E-mail<input id="account-email-input" name="email" type="email" maxlength="254" autocomplete="username" required></label><label id="account-password-label">Senha<input id="account-password" name="password" type="password" autocomplete="current-password" required maxlength="128"></label><button type="submit" class="button primary" id="account-submit">Entrar</button><button type="button" class="text-button" id="account-forgot">Esqueci minha senha</button></form>
+            <p class="account-local-hint muted">Pode continuar usando sem entrar. Seus dados locais só serão enviados à conta quando você escolher importar.</p>
+        </section>
     </dialog>
     <div id="toast" role="status" hidden><span></span><button hidden>Desfazer</button></div>
     <dialog id="assistant-dialog" class="assistant-dialog" aria-labelledby="assistant-title">
@@ -104,6 +122,9 @@
     <script src="workspace.js"></script>
     <script src="assistant-core.js"></script>
     <script src="assistant.js"></script>
+    <script src="cloud-client.js" defer></script>
+    <script src="sync-core.js" defer></script>
+    <script src="cloud.js" defer></script>
 </body>
 
 </html>

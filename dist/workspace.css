@@ -39,6 +39,31 @@ body[data-input="keyboard"] button:active { transform:none; }
 .sidebar-section { margin-top:27px; }
 .sidebar-bottom { margin-top:auto; padding-top:24px; }
 .sidebar-bottom>.nav-item { font-size:12px; border-top:1px solid var(--line); border-radius:0; padding-top:20px; }
+#account-open { border:0; border-radius:11px; background:var(--accent-soft); color:var(--accent-ink); padding:12px; margin-bottom:12px; }
+.profile>div { min-width:0; }
+#profile-name,#profile-status { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.account-dialog { width:min(510px,calc(100% - 28px)); }
+.account-dialog h2 { max-width:370px; }
+.account-intro { font-size:14px; line-height:1.8; margin:0 0 16px; }
+.account-message { font-size:13px; line-height:1.7; color:var(--accent-ink); overflow-wrap:anywhere; }
+.account-message:empty { display:none; }
+.account-message.error { color:var(--danger); }
+.account-tabs { display:flex; padding:4px; gap:4px; background:var(--surface); border-radius:11px; margin:20px 0; }
+.account-tabs button { flex:1; min-height:38px; padding:9px; font-size:13px; color:var(--muted); border-radius:8px; }
+.account-tabs button[aria-pressed="true"] { color:var(--ink); background:var(--card); }
+#account-form>.button { width:100%; margin-top:6px; }
+#account-forgot { display:block; padding:14px 0; margin:auto; }
+.account-local-hint { border-top:1px solid var(--line); padding-top:17px; margin:5px 0 0; font-size:12px; line-height:1.8; }
+.account-email { font-size:15px; font-weight:600; overflow-wrap:anywhere; margin:18px 0 6px; }
+#account-sync-description { font-size:13px; }
+.account-actions { display:flex; align-items:center; flex-wrap:wrap; gap:13px; margin:17px 0; }
+.account-section { padding-top:20px; margin-top:23px; border-top:1px solid var(--line); }
+.account-section h3 { font-size:15px; font-weight:600; margin:0 0 8px; }
+.account-section p { font-size:13px; line-height:1.8; }
+.account-section .small { font-size:11px; margin-top:12px; }
+.account-footer { display:flex; align-items:center; justify-content:space-between; padding-top:21px; margin-top:23px; border-top:1px solid var(--line); }
+.sync-banner { margin:8px 32px; padding:12px 16px; border:1px solid var(--line); border-radius:12px; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:space-between; gap:18px; font-size:12px; }
+.sync-banner .text-button { flex-shrink:0; color:inherit; }
 .profile { padding:20px 12px 0; font-size:12px; gap:10px; }
 .profile small { font-size:10px; margin-top:3px; }
 .avatar { width:35px; height:35px; }
@@ -306,6 +331,8 @@ body[data-input="pointer"] :is(.button,.icon-button,.nav-item,.segmented button)
   .assistant-trigger { font-size:0!important; padding:10px!important; }
   .assistant-trigger svg { width:18px; height:18px; }
   .view { padding:8px 14px 32px; }
+  .sync-banner { margin:8px 14px; align-items:flex-start; flex-direction:column; gap:9px; }
+  .account-actions .button { font-size:12px; }
   .view:not(.today) { margin:8px 14px 28px; padding:20px 16px; border-radius:20px; }
   h1,.today-hero h1 { font-size:27px; letter-spacing:-.8px; }
   .lead { font-size:13px; }
