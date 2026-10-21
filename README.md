@@ -34,6 +34,8 @@ O modo local mantém a chave `clareza.workspace.v3`. Ao entrar, cada conta receb
 
 As alterações são salvas no navegador antes do envio. Se dois dispositivos alterarem o espaço, o aplicativo preserva as versões e pede uma escolha. O banco compara revisões e impede gravações antigas. Veja [supabase/README.md](supabase/README.md) para detalhes e a configuração necessária dos e-mails de cadastro e recuperação. A IA online permanece opcional, conforme [VERCEL.md](VERCEL.md).
 
+O acesso com Google está implementado e depende da ativação do provedor no Supabase e da criação do cliente OAuth no Google Cloud. O [guia de configuração](supabase/README.md#acesso-com-google) contém as URLs exatas. O botão informa a disponibilidade real; nenhuma credencial secreta Google faz parte do código do aplicativo.
+
 ## Verificação
 
 Os testes cobrem os dados e a recorrência, propostas do assistente, tratamento da API, temas e interações com DOM simulado. Esses testes não substituem uma revisão visual em navegador nem um teste de toque em aparelho real. A interface respeita redução de movimento e mantém ações por teclado imediatas.
