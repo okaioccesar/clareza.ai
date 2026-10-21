@@ -3,6 +3,7 @@
 .vercel
 node_modules
 domain.test.cjs
+*.test.cjs
 assistant.test.cjs
 api.test.cjs
 theme.test.cjs

@@ -13,6 +13,7 @@
     body.classList.toggle('mobile-nav-open',open);
     sidebar.inert=mobile.matches&&!open;
     main.inert=open;
+    $('.skip-link').inert=open;
     backdrop.hidden=!open;
     menu.setAttribute('aria-expanded',String(open));
     collapse.setAttribute('aria-expanded',String(!compact));
@@ -22,6 +23,15 @@
   function closeMenu(restore=false) { sidebar.classList.remove('open');sync();if(restore)menu.focus(); }
   menu.onclick=()=>{const open=sidebar.classList.toggle('open');sync();if(open)$('#navigation .nav-item')?.focus();};
   backdrop.onclick=()=>closeMenu(true);
+  $('.skip-link').onclick=event=>{event.preventDefault();$('#view').focus();};
+  sidebar.addEventListener('keydown',event=>{
+    if(event.key!=='Tab'||!body.classList.contains('mobile-nav-open'))return;
+    const stops=[...sidebar.querySelectorAll('a[href],button:not([disabled]),input,select,textarea')].filter(el=>el.getClientRects().length&&!el.closest('[hidden]'));
+    if(!stops.length)return;
+    const first=stops[0],last=stops.at(-1);
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  });
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&body.classList.contains('mobile-nav-open'))closeMenu(true);});
   collapse.onclick=()=>{compact=!compact;try{localStorage.setItem('clareza.sidebar',compact?'compact':'expanded');}catch{}sync();};
   mobile.addEventListener('change',()=>closeMenu());
