@@ -4,6 +4,9 @@
   let client=null,session=null,account=null,available=false,connecting=false,generation=0;
   let revision=0,dirty=false,writeId=D.id(),phase='local',conflict=null,flight=null,timer=null;
   let lastData='',lastCacheRaw='',authMode='signin',busy=false,reconnecting=false,latestBackup='';
+  let publicConfig=null,googleEnabled=null,checkingGoogle=false;
+  const returnUrl=new URL(location.href),returnHash=new URLSearchParams(returnUrl.hash.slice(1));
+  const returnError=returnUrl.searchParams.get('error')||returnHash.get('error'),returnCode=returnUrl.searchParams.has('code');
   const cacheKey=id=>KEY+'.account.'+id;
   const messages={local:'Salvo neste navegador',connecting:'Conectando sua conta…',clean:'Sincronizado',pending:'Salvo neste navegador · sincronizando…',offline:'Salvo neste navegador · sem conexão',conflict:'Duas versões · escolha como continuar',expired:'Entre novamente para sincronizar',error:'Não foi possível sincronizar'};
   function message(text,error=false){$('#account-message').textContent=text;$('#account-message').classList.toggle('error',error);}
@@ -36,8 +39,31 @@
     const show=!!account&&['offline','conflict','expired','error'].includes(phase);
     $('#sync-banner').hidden=!show;
     $('#sync-banner-text').textContent=phase==='conflict'?'Outro dispositivo alterou o espaço. Suas alterações foram preservadas; escolha como continuar.':messages[phase];
-    $('#account-submit').disabled=!available||busy;
+    $('#account-submit').disabled=!available||busy||connecting;
+    $('#account-google-section').hidden=['reset','recovery'].includes(authMode);
+    $('#account-google').disabled=!available||busy||connecting||googleEnabled!==true||navigator.onLine===false;
+    $('#account-google-status').textContent=navigator.onLine===false?'Conecte-se à internet para entrar com Google.':!available?'':checkingGoogle?'Verificando acesso com Google…':googleEnabled===false?'O acesso com Google estará disponível em breve.':googleEnabled===null?'Google indisponível no momento. Você pode entrar por e-mail.':'';
+    document.querySelectorAll('[data-auth-mode],#account-forgot').forEach(button=>button.disabled=busy||connecting);
     document.querySelectorAll('[data-account-action]').forEach(button=>button.disabled=busy||connecting);
+  }
+  async function checkGoogle(){
+    if(!publicConfig||checkingGoogle)return;
+    checkingGoogle=true;update();
+    try{
+      const response=await fetch(publicConfig.url.replace(/\/$/,'')+'/auth/v1/settings',{headers:{apikey:publicConfig.publishableKey},signal:AbortSignal.timeout(8000)});
+      if(!response.ok)throw Error('Provider unavailable');
+      const settings=await response.json();googleEnabled=settings.external?.google===true;
+    }catch{googleEnabled=null;}finally{checkingGoogle=false;update();}
+  }
+  function cleanAuthReturn(){
+    const url=new URL(location.href);
+    for(const name of ['error','error_code','error_description','code'])url.searchParams.delete(name);
+    const hash=new URLSearchParams(url.hash.slice(1));
+    if(hash.has('error')){for(const name of ['error','error_code','error_description'])hash.delete(name);url.hash=hash.toString();}
+    history.replaceState(null,'',url.href);
+  }
+  function showReturnError(){
+    cleanAuthReturn();message(returnError==='access_denied'?'Entrada cancelada. Você pode tentar novamente.':'Não foi possível concluir o acesso. O link pode ter expirado; tente entrar novamente.',true);open();
   }
   function setPhase(value){phase=value;update();}
   async function callApi(method='GET',body,active=session){
@@ -140,8 +166,18 @@
     document.querySelectorAll('[data-auth-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.authMode===mode)));
     update();
   }
-  function open(){update();if(!dialog.open)dialog.showModal();if(authMode==='recovery')$('#account-password').focus();else if(!account)$('#account-email-input').focus();}
+  function open(){update();if(!dialog.open)dialog.showModal();if(authMode==='recovery')$('#account-password').focus();else if(!account)$('#account-email-input').focus();if(!account||reconnecting)checkGoogle();}
   $('#account-open').onclick=open;$('#sync-banner-action').onclick=open;
+  $('#account-google').onclick=async()=>{
+    if(!client||busy||connecting||googleEnabled!==true)return;
+    if(!save()){message('Não foi possível salvar seus dados neste navegador. Exporte uma cópia antes de entrar.',true);return;}
+    busy=true;update();message('Abrindo o Google…');$('#account-password').value='';
+    try{
+      const result=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:new URL('/',location.origin).href,queryParams:{prompt:'select_account'}}});
+      if(result.error)throw Error('Não foi possível abrir o Google. Tente novamente em instantes.');
+    }catch{message('Não foi possível abrir o Google. Tente novamente em instantes.',true);}
+    finally{busy=false;update();}
+  };
   $('#account-forgot').onclick=()=>setAuthMode(authMode==='signin'?'reset':'signin');
   document.querySelectorAll('[data-auth-mode]').forEach(button=>button.onclick=()=>setAuthMode(button.dataset.authMode));
   $('#account-form').onsubmit=async event=>{
@@ -193,7 +229,8 @@
       catch(error){message(error.message,true);}finally{busy=false;update();}
     }
   });
-  window.addEventListener('online',()=>{if(dirty)flush();else refresh();});
+  window.addEventListener('online',()=>{if(dirty)flush();else refresh();if(dialog.open)checkGoogle();});
+  window.addEventListener('offline',update);
   window.addEventListener('storage',event=>{
     if(!account||event.key!==cacheKey(account.id)||!event.newValue||dirty||editing())return;
     try{const other=S.parseCache(event.newValue);if(!other.dirty&&other.revision>=revision){state=other.data;revision=other.revision;lastData=JSON.stringify(state);lastCacheRaw=event.newValue;writeId=other.writeId;render();setPhase('clean');}}catch{}
@@ -210,11 +247,12 @@
       }catch{try{config=JSON.parse(localStorage.getItem('clareza.public-config')||'null');}catch{}}
       if(!config?.configured||!/^https:\/\/[a-z0-9]+\.supabase\.co\/?$/.test(config.url)||!String(config.publishableKey).startsWith('sb_publishable_')){message('As contas online ainda não estão disponíveis. Você pode continuar usando o espaço local.');update();return;}
       client=ClarezaAuth.createClient(config.url,config.publishableKey,{auth:{flowType:'pkce',storageKey:'clareza.auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-      available=true;
+      publicConfig=config;available=true;checkGoogle();
       client.auth.onAuthStateChange((event,next)=>{setTimeout(()=>{if(event==='PASSWORD_RECOVERY'){reconnecting=true;setAuthMode('recovery');open();}acceptSession(next);},0);});
       const result=await client.auth.getSession();if(result.error)throw result.error;
       await acceptSession(result.data.session);update();setInterval(refresh,30000);
-    }catch{message('Não foi possível conectar as contas. O modo local continua disponível.',true);update();}
+      if(returnError||(returnCode&&new URL(location.href).searchParams.has('code')))showReturnError();
+    }catch{if(returnError||returnCode)showReturnError();else message('Não foi possível conectar as contas. O modo local continua disponível.',true);update();}
   }
   initialize();
 })();

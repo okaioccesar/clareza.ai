@@ -48,6 +48,14 @@ body[data-input="keyboard"] button:active { transform:none; }
 .account-message { font-size:13px; line-height:1.7; color:var(--accent-ink); overflow-wrap:anywhere; }
 .account-message:empty { display:none; }
 .account-message.error { color:var(--danger); }
+.account-google-section { margin-top:20px; }
+.google-signin { width:100%; min-height:46px; justify-content:center; gap:12px; font-weight:500; }
+.google-signin svg { flex-shrink:0; }
+.google-signin:disabled { opacity:.6; cursor:not-allowed; }
+#account-google-status { font-size:12px; line-height:1.6; margin:9px 0 0; }
+#account-google-status:empty { display:none; }
+.account-auth-divider { display:flex; align-items:center; gap:13px; margin:21px 0 0; color:var(--muted); font-size:11px; }
+.account-auth-divider::before,.account-auth-divider::after { content:""; height:1px; background:var(--line); flex:1; }
 .account-tabs { display:flex; padding:4px; gap:4px; background:var(--surface); border-radius:11px; margin:20px 0; }
 .account-tabs button { flex:1; min-height:38px; padding:9px; font-size:13px; color:var(--muted); border-radius:8px; }
 .account-tabs button[aria-pressed="true"] { color:var(--ink); background:var(--card); }

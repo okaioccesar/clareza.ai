@@ -3,18 +3,19 @@ const {JSDOM,VirtualConsole}=require('jsdom'),D=require('./dist/domain.js');
 const key='clareza.workspace.v3',uid='11111111-1111-4111-8111-111111111111';
 const empty=()=>D.normalize({tasks:[]}),session={access_token:'test-session-token',user:{id:uid,email:'owner@test.invalid'}};
 const tick=()=>new Promise(resolve=>setTimeout(resolve,5));
-async function boot(t,{guest=empty(),signedIn=false,cache=null,offline=false}={}){
+async function boot(t,{guest=empty(),signedIn=false,cache=null,offline=false,googleEnabled=true,oauthError=null,sessionError=null,url='https://clareza.example/'}={}){
   const errors=[],virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e));
-  const dom=new JSDOM(fs.readFileSync('dist/index.html','utf8'),{url:'https://clareza.example/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole});
+  const dom=new JSDOM(fs.readFileSync('dist/index.html','utf8'),{url,runScripts:'outside-only',pretendToBeVisual:true,virtualConsole});
   const w=dom.window,$=selector=>w.document.querySelector(selector);let active=signedIn?session:null,listener,networkDown=offline;
-  const remote={revision:0,data:null},writes=[];let holdGet=null,holdPut=null;
+  const remote={revision:0,data:null},writes=[],oauthCalls=[];let holdGet=null,holdPut=null,clientOptions;
   w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.structuredClone=structuredClone;w.crypto.randomUUID=crypto.randomUUID;
   Object.defineProperty(w.navigator,'onLine',{get:()=>!networkDown});w.HTMLDialogElement.prototype.showModal=function(){this.open=true};w.HTMLDialogElement.prototype.close=function(){this.open=false};
   w.localStorage.setItem(key,JSON.stringify(guest));if(cache)w.localStorage.setItem(key+'.account.'+uid,JSON.stringify(cache));
-  w.ClarezaAuth={createClient:()=>({auth:{onAuthStateChange(fn){listener=fn},getSession:async()=>({data:{session:active}}),signInWithPassword:async()=>{active=session;listener('SIGNED_IN',active);return {data:{session:active}}},signOut:async()=>{active=null;listener('SIGNED_OUT',null);return {}},signUp:async()=>({data:{session:null}}),resetPasswordForEmail:async()=>({}),updateUser:async()=>({})}})};
+  w.ClarezaAuth={createClient:(_url,_key,options)=>{clientOptions=options;return {auth:{onAuthStateChange(fn){listener=fn},getSession:async()=>({data:{session:active},error:sessionError}),signInWithOAuth:async options=>{oauthCalls.push(options);return {data:{url:'https://example.supabase.co/auth/v1/authorize'},error:oauthError}},signInWithPassword:async()=>{active=session;listener('SIGNED_IN',active);return {data:{session:active}}},signOut:async()=>{active=null;listener('SIGNED_OUT',null);return {}},signUp:async()=>({data:{session:null}}),resetPasswordForEmail:async()=>({}),updateUser:async()=>({})}}}};
   w.fetch=async(url,options={})=>{
     if(url==='/api/config')return {ok:true,json:async()=>({configured:true,url:'https://example.supabase.co',publishableKey:'sb_publishable_test'})};
     if(networkDown)throw Error('Network unavailable');
+    if(url==='https://example.supabase.co/auth/v1/settings')return {ok:true,json:async()=>({external:{google:googleEnabled}})};
     assert.equal(url,'/api/workspace');assert.equal(options.headers.Authorization,'Bearer test-session-token');
     if(options.method==='PUT'){
       const input=JSON.parse(options.body);writes.push(input);if(holdPut)await holdPut;
@@ -27,7 +28,7 @@ async function boot(t,{guest=empty(),signedIn=false,cache=null,offline=false}={}
   const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','workspace-core.js','workspace.js','assistant-core.js','assistant.js','sync-core.js','cloud.js'];
   for(const file of scripts)vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),dom.getInternalVMContext(),{filename:file});
   t.after(()=>{w.close();assert.deepEqual(errors,[])});await tick();
-  return {w,$,remote,writes,network(value){networkDown=value},auth(event,next){active=next;listener(event,next)},setSession(next){active=next},hold(method){let release;const promise=new Promise(resolve=>release=resolve);if(method==='GET')holdGet=promise;else holdPut=promise;return ()=>{if(method==='GET')holdGet=null;else holdPut=null;release()}},data:()=>JSON.parse(w.eval('JSON.stringify(state)')),async login(){$('#account-open').click();$('#account-email-input').value='owner@test.invalid';$('#account-password').value='test-password';$('#account-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();},add(title){$('#quick-task-title').value=title;$('#quick-task-title').dispatchEvent(new w.Event('input',{bubbles:true}));$('#quick-task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));},async sync(){$('[data-account-action="sync"]').click();await tick();}};
+  return {w,$,remote,writes,oauthCalls,clientOptions,network(value){networkDown=value},auth(event,next){active=next;listener(event,next)},setSession(next){active=next},hold(method){let release;const promise=new Promise(resolve=>release=resolve);if(method==='GET')holdGet=promise;else holdPut=promise;return ()=>{if(method==='GET')holdGet=null;else holdPut=null;release()}},data:()=>JSON.parse(w.eval('JSON.stringify(state)')),async login(){$('#account-open').click();$('#account-email-input').value='owner@test.invalid';$('#account-password').value='test-password';$('#account-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();},add(title){$('#quick-task-title').value=title;$('#quick-task-title').dispatchEvent(new w.Event('input',{bubbles:true}));$('#quick-task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));},async sync(){$('[data-account-action="sync"]').click();await tick();}};
 }
 test('login não envia dados locais antes da importação e logout não mistura contas',async t=>{
   const guest=D.normalize({tasks:[{id:'guest',title:'Tarefa local'}]}),app=await boot(t,{guest});await app.login();
@@ -83,4 +84,47 @@ test('uma leitura antiga não substitui alterações já sincronizadas durante a
   app.add('Alteração mais recente');await app.sync();assert.equal(app.remote.revision,1);
   release();await tick();assert.equal(app.data().tasks[0].title,'Alteração mais recente');
   assert.equal(JSON.parse(app.w.localStorage.getItem(key+'.account.'+uid)).revision,1);
+});
+
+test('Google inicia OAuth com PKCE, retorno ao próprio site e sem enviar dados locais',async t=>{
+  const guest=D.normalize({tasks:[{id:'guest',title:'Dado local privado'}]}),app=await boot(t,{guest});
+  app.$('#account-open').click();app.$('#account-google').click();await tick();
+  assert.equal(app.clientOptions.auth.flowType,'pkce');assert.equal(app.clientOptions.auth.detectSessionInUrl,true);
+  assert.equal(app.oauthCalls.length,1);assert.equal(app.oauthCalls[0].provider,'google');assert.equal(app.oauthCalls[0].options.redirectTo,'https://clareza.example/');
+  assert.equal(app.oauthCalls[0].options.queryParams.prompt,'select_account');assert.equal(app.oauthCalls[0].options.scopes,undefined);
+  assert.equal(app.writes.length,0);assert.equal(JSON.parse(app.w.localStorage.getItem(key)).tasks[0].id,'guest');
+  app.auth('SIGNED_IN',session);await tick();await tick();assert.equal(app.data().tasks.length,0);assert.equal(app.writes.length,0);
+});
+
+test('Google desabilitado não inicia redirecionamento e mantém login por e-mail disponível',async t=>{
+  const app=await boot(t,{googleEnabled:false});app.$('#account-open').click();await tick();
+  assert.equal(app.$('#account-google').disabled,true);assert.match(app.$('#account-google-status').textContent,/disponível em breve/);
+  app.$('#account-google').click();assert.equal(app.oauthCalls.length,0);assert.equal(app.$('#account-submit').disabled,false);
+});
+
+test('Google não redireciona se a cópia local falhar ao salvar',async t=>{
+  const app=await boot(t);app.$('#account-open').click();
+  const original=app.w.Storage.prototype.setItem;app.w.Storage.prototype.setItem=function(k,v){if(k===key)throw Error('Quota');return original.call(this,k,v)};
+  app.$('#account-google').click();await tick();assert.equal(app.oauthCalls.length,0);assert.match(app.$('#account-message').textContent,/Exporte uma cópia/);
+});
+
+test('falha ao abrir Google não revela resposta do provedor e permite tentar de novo',async t=>{
+  const app=await boot(t,{oauthError:{message:'sensitive-provider-detail'}});app.$('#account-open').click();app.$('#account-google').click();await tick();
+  assert.match(app.$('#account-message').textContent,/Não foi possível abrir o Google/);assert.doesNotMatch(app.$('#account-message').textContent,/sensitive-provider-detail/);assert.equal(app.$('#account-google').disabled,false);
+});
+
+test('retorno cancelado limpa parâmetros de autenticação e preserva a rota e os dados locais',async t=>{
+  const guest=D.normalize({tasks:[{id:'local',title:'Continuar aqui'}]}),app=await boot(t,{guest,url:'https://clareza.example/?error=access_denied&error_description=private-provider-error&keep=1#today'});
+  assert.equal(app.$('#account-dialog').open,true);assert.match(app.$('#account-message').textContent,/Entrada cancelada/);
+  assert.equal(app.w.location.search,'?keep=1');assert.equal(app.w.location.hash,'#today');assert.equal(app.data().tasks[0].id,'local');assert.equal(app.writes.length,0);
+});
+
+test('código de retorno expirado é removido e oferece nova tentativa de login',async t=>{
+  const app=await boot(t,{sessionError:Error('Expired code'),url:'https://clareza.example/?code=expired-code#inbox'});
+  assert.equal(app.w.location.search,'');assert.equal(app.w.location.hash,'#inbox');assert.equal(app.$('#account-dialog').open,true);assert.match(app.$('#account-message').textContent,/link pode ter expirado/);
+});
+
+test('retorno sem verificador PKCE não simula sucesso nem deixa código na URL',async t=>{
+  const app=await boot(t,{url:'https://clareza.example/?code=unprocessed-code'});
+  assert.equal(app.w.location.search,'');assert.match(app.$('#account-message').textContent,/tente entrar novamente/);assert.equal(app.$('#account-dialog').open,true);assert.equal(app.writes.length,0);
 });
