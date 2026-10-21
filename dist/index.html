@@ -14,9 +14,15 @@
     <link rel="stylesheet" href="organization.css">
     <link rel="stylesheet" href="brand.css">
     <link rel="stylesheet" href="workspace.css">
+    <link rel="stylesheet" href="login.css">
 </head>
 
 <body>
+    <section id="login-landing" class="login-landing" aria-label="Bem-vindo ao clareza.ai">
+        <div class="login-story"><a class="login-brand" href="/">clareza<span>.ai</span></a><div class="login-story-content"><span class="overline">MENOS RUÍDO. MAIS DIREÇÃO.</span><h1>Um lugar para<br>clarear suas ideias.</h1><p>Organize o que importa e encontre espaço para fazer acontecer. Suas tarefas, projetos e ideias, juntos.</p><div class="login-preview" aria-hidden="true"><span class="overline">UM DIA COM MAIS CLAREZA</span><h3>Um passo de cada vez.</h3><div><span class="login-check">✓</span> Tirar uma ideia do papel</div><div><span class="login-check">✓</span> Dar atenção ao que importa</div><div><span class="login-check pending">○</span> Reservar um tempo para você</div><span class="login-preview-note">Seu ritmo. Seu espaço.</span></div></div><p class="login-footnote">Tarefas · Projetos · Ideias</p></div>
+        <div class="login-access"><div id="login-auth-slot"></div><noscript>Ative o JavaScript para entrar no clareza.ai.</noscript><p class="login-privacy">Seu espaço pessoal, conectado à sua conta.</p></div>
+    </section>
+    <div id="app-shell" hidden inert>
     <a class="skip-link" href="#view">Ir para o conteúdo</a>
     <aside id="sidebar" aria-label="Barra lateral"><div class="sidebar-top"><a class="brand" href="#today" aria-label="clareza.ai, início"><span
                 class="brand-mark" aria-hidden="true"><svg viewBox="0 0 36 36" fill="currentColor"><g transform="rotate(-15 18 18)"><rect x="6" y="8" width="6" height="21" rx="3"/><rect x="15" y="4" width="6" height="29" rx="3"/><rect x="24" y="11" width="6" height="15" rx="3"/></g></svg></span><span class="brand-name">clareza<span class="brand-ai">.ai</span></span></a><button id="sidebar-collapse" class="icon-button" aria-label="Recolher barra lateral" aria-expanded="true" title="Recolher barra lateral"><span data-icon="left"></span></button></div><div class="workspace-tag"><span class="workspace-tag-icon">P</span><span>Meu espaço pessoal</span><span class="workspace-tag-dot"></span></div><button id="command-open"
@@ -103,7 +109,7 @@
             <div id="account-google-section" class="account-google-section"><button type="button" id="account-google" class="button secondary google-signin" aria-describedby="account-google-status" disabled><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.24c1.9-1.75 2.98-4.33 2.98-7.36Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.41l-3.24-2.51c-.9.6-2.06.97-3.38.97-2.6 0-4.8-1.76-5.59-4.12H3.07v2.59A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.41 13.93A6 6 0 0 1 6.1 12c0-.67.11-1.32.31-1.93V7.48H3.07A10 10 0 0 0 2 12c0 1.61.38 3.14 1.07 4.52l3.34-2.59Z"/><path fill="#EA4335" d="M12 5.95c1.47 0 2.79.5 3.83 1.5l2.87-2.88A9.63 9.63 0 0 0 12 2a10 10 0 0 0-8.93 5.48l3.34 2.59C7.2 7.71 9.4 5.95 12 5.95Z"/></svg><span>Continuar com Google</span></button><p id="account-google-status" class="small muted" role="status"></p><div class="account-auth-divider"><span>ou use seu e-mail</span></div></div>
             <div class="account-tabs" id="account-tabs" role="group" aria-label="Acesso à conta"><button data-auth-mode="signin" aria-pressed="true">Entrar</button><button data-auth-mode="signup" aria-pressed="false">Criar conta</button></div>
             <form id="account-form"><label id="account-email-label">E-mail<input id="account-email-input" name="email" type="email" maxlength="254" autocomplete="username" required></label><label id="account-password-label">Senha<input id="account-password" name="password" type="password" autocomplete="current-password" required maxlength="128"></label><button type="submit" class="button primary" id="account-submit">Entrar</button><button type="button" class="text-button" id="account-forgot">Esqueci minha senha</button></form>
-            <p class="account-local-hint muted">Pode continuar usando sem entrar. Seus dados locais só serão enviados à conta quando você escolher importar.</p>
+            <p class="account-local-hint muted">Entre para acessar seu espaço. Dados antigos deste navegador só serão importados quando você escolher.</p>
         </section>
     </dialog>
     <div id="toast" role="status" hidden><span></span><button hidden>Desfazer</button></div>
@@ -115,6 +121,7 @@
         <div class="assistant-suggestions"><button data-chat-prompt="Organize meu dia">Organizar meu dia</button><button data-chat-prompt="Planeje minha semana">Planejar a semana</button><button data-chat-prompt="Resumo das minhas tarefas">Ver resumo</button></div>
         <form id="assistant-form" class="assistant-composer"><label class="sr-only" for="assistant-input">Mensagem para o assistente</label><textarea id="assistant-input" rows="2" maxlength="4000" placeholder="Crie revisar proposta amanhã com prioridade alta"></textarea><div><span>Enter envia · Shift + Enter quebra a linha</span><button type="submit" class="button primary" id="assistant-send">Enviar</button></div></form>
     </dialog>
+    </div>
     <script src="domain.js"></script>
     <script src="app.js"></script>
     <script src="organization.js"></script>

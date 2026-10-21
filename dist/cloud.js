@@ -22,14 +22,29 @@
     localStorage.setItem(key,JSON.stringify({label,data,createdAt:new Date().toISOString()}));
     latestBackup=key;
   }
+  const landing=$('#login-landing'),shell=$('#app-shell'),authSlot=$('#login-auth-slot');
+  const dialogHome=document.createComment('account-dialog-home');
+  dialog.before(dialogHome);
+  function updateAccess(){
+    const unlocked=!!account&&!!session&&!connecting&&phase!=='expired'&&authMode!=='recovery';
+    shell.hidden=!unlocked;shell.inert=!unlocked;landing.hidden=unlocked;
+    if(unlocked){
+      if(dialog.parentNode===authSlot){dialog.close();dialogHome.after(dialog);$('#view').focus();}
+    }else{
+      for(const modal of document.querySelectorAll('dialog[open]'))if(modal!==dialog)modal.close();
+      if(dialog.parentNode!==authSlot){if(dialog.open)dialog.close();authSlot.append(dialog);}
+      dialog.open=true;
+    }
+  }
   function update(){
+    updateAccess();
     $('#save-status').textContent=account||connecting?messages[phase]:messages.local;
     $('#profile-name').textContent=account?.email||'Espaço pessoal';
     $('#profile-status').textContent=account?messages[phase]:'Salvo neste navegador';
     $('#account-button-label').textContent=account?'Minha conta':'Entrar ou criar conta';
     $('#account-open').title=account?'Minha conta':'Entrar ou criar conta';
     $('#account-signed-in').hidden=!account;
-    $('#account-auth').hidden=!!account&&!reconnecting;
+    $('#account-auth').hidden=!!account&&!reconnecting&&phase!=='expired';
     $('#account-email').textContent=account?.email||'';
     $('#account-sync-description').textContent=messages[phase];
     $('#account-conflict').hidden=!conflict;
@@ -113,7 +128,7 @@
     phase='local';render();update();
   }
   async function acceptSession(next){
-    if(next&&account&&next.user.id===account.id){session=next;if(dirty&&!conflict)schedule();return;}
+    if(next&&account&&next.user.id===account.id){session=next;if(phase==='expired')phase=dirty?'pending':'clean';update();if(dirty&&!conflict)schedule();return;}
     if(connecting&&next?.user?.id===session?.user?.id)return;
     if(!next){session=null;connecting=false;generation++;if(account)restoreGuest();else{phase='local';update();}return;}
     if(account)restoreGuest();
@@ -245,14 +260,17 @@
         if(!response.ok)throw Error('Configuração indisponível');
         if(config.configured){try{localStorage.setItem('clareza.public-config',JSON.stringify({configured:true,url:config.url,publishableKey:config.publishableKey}));}catch{}}
       }catch{try{config=JSON.parse(localStorage.getItem('clareza.public-config')||'null');}catch{}}
-      if(!config?.configured||!/^https:\/\/[a-z0-9]+\.supabase\.co\/?$/.test(config.url)||!String(config.publishableKey).startsWith('sb_publishable_')){message('As contas online ainda não estão disponíveis. Você pode continuar usando o espaço local.');update();return;}
+      if(!config?.configured||!/^https:\/\/[a-z0-9]+\.supabase\.co\/?$/.test(config.url)||!String(config.publishableKey).startsWith('sb_publishable_')){message('As contas online ainda não estão disponíveis. Recarregue a página para tentar novamente.');update();return;}
       client=ClarezaAuth.createClient(config.url,config.publishableKey,{auth:{flowType:'pkce',storageKey:'clareza.auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
       publicConfig=config;available=true;checkGoogle();
       client.auth.onAuthStateChange((event,next)=>{setTimeout(()=>{if(event==='PASSWORD_RECOVERY'){reconnecting=true;setAuthMode('recovery');open();}acceptSession(next);},0);});
       const result=await client.auth.getSession();if(result.error)throw result.error;
       await acceptSession(result.data.session);update();setInterval(refresh,30000);
       if(returnError||(returnCode&&new URL(location.href).searchParams.has('code')))showReturnError();
-    }catch{if(returnError||returnCode)showReturnError();else message('Não foi possível conectar as contas. O modo local continua disponível.',true);update();}
+    }catch{if(returnError||returnCode)showReturnError();else message('Não foi possível conectar as contas. Verifique a conexão e recarregue a página.',true);update();}
   }
+  dialog.addEventListener('cancel',event=>{if(!landing.hidden)event.preventDefault();});
+  document.addEventListener('keydown',event=>{if(!landing.hidden&&(!authSlot.contains(event.target)||event.ctrlKey||event.metaKey||event.key==='Escape'))event.stopImmediatePropagation();},true);
+  update();
   initialize();
 })();

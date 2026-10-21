@@ -5,6 +5,10 @@ const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','wor
 function boot(t,{tasks=[],areas=[],projects=[],pages=[],mobile=false,storageBlocked=false}={}){
   const errors=[],console=new VirtualConsole();console.on('jsdomError',error=>errors.push(error));
   const dom=new JSDOM(fs.readFileSync('dist/index.html','utf8'),{url:'https://clareza.example/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:console});
+  // Component tests exercise the workspace after the authentication gate.
+  dom.window.document.querySelector("#app-shell").hidden=false;
+  dom.window.document.querySelector("#app-shell").removeAttribute("inert");
+  dom.window.document.querySelector("#login-landing").hidden=true;
   const w=dom.window;w.matchMedia=query=>({matches:query.includes('max-width')?mobile:false,addEventListener(){},removeEventListener(){}});w.scrollTo=()=>{};w.structuredClone=structuredClone;w.crypto.randomUUID=crypto.randomUUID;
   w.HTMLDialogElement.prototype.showModal=function(){this.open=true};w.HTMLDialogElement.prototype.close=function(){this.open=false};
   w.localStorage.setItem('clareza.workspace.v3',JSON.stringify({tasks,areas,projects,pages,daily:{},scratch:''}));

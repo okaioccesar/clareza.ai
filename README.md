@@ -2,7 +2,7 @@
 
 Um espaço pessoal para tarefas, projetos, áreas da vida e páginas de notas. A interface oferece temas claro, escuro e sistema, captura rápida, visão semanal e um assistente que prepara propostas antes de alterar tarefas.
 
-Produção pública, sem login: [clareza-lake.vercel.app](https://clareza-lake.vercel.app/). As prévias continuam protegidas pela Vercel. O projeto está conectado à branch `main` deste repositório.
+Endereço de produção: [clareza-lake.vercel.app](https://clareza-lake.vercel.app/). As prévias continuam protegidas pela Vercel. O projeto está conectado à branch `main` deste repositório.
 
 ## Desenvolvimento
 
@@ -39,3 +39,7 @@ O acesso com Google está implementado e depende da ativação do provedor no Su
 ## Verificação
 
 Os testes cobrem os dados e a recorrência, propostas do assistente, tratamento da API, temas e interações com DOM simulado. Esses testes não substituem uma revisão visual em navegador nem um teste de toque em aparelho real. A interface respeita redução de movimento e mantém ações por teclado imediatas.
+
+## Entrada no aplicativo
+
+A página inicial apresenta a landing de acesso. O espaço de trabalho fica oculto e inativo até a sessão ser restaurada e os dados da conta serem carregados. Sair ou perder a sessão retorna à landing. Dados locais antigos continuam preservados para importação explícita depois do login. A API do espaço continua validando o token no servidor.

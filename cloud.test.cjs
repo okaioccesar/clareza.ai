@@ -128,3 +128,27 @@ test('retorno sem verificador PKCE não simula sucesso nem deixa código na URL'
   const app=await boot(t,{url:'https://clareza.example/?code=unprocessed-code'});
   assert.equal(app.w.location.search,'');assert.match(app.$('#account-message').textContent,/tente entrar novamente/);assert.equal(app.$('#account-dialog').open,true);assert.equal(app.writes.length,0);
 });
+
+
+test('login gate hides workspace until sign-in and restores landing on sign-out',async t=>{
+  const app=await boot(t);
+  assert.equal(app.$('#app-shell').hidden,true);
+  assert.equal(app.$('#app-shell').inert,true);
+  assert.equal(app.$('#login-landing').hidden,false);
+  assert.equal(app.$('#account-dialog').parentNode.id,'login-auth-slot');
+  await app.login();
+  assert.equal(app.$('#app-shell').hidden,false);
+  assert.equal(app.$('#app-shell').inert,false);
+  assert.equal(app.$('#login-landing').hidden,true);
+  app.$('[data-account-action="logout"]').click();await tick();
+  assert.equal(app.$('#app-shell').hidden,true);
+  assert.equal(app.$('#login-landing').hidden,false);
+});
+
+test('restored session opens workspace and lost session blocks it again',async t=>{
+  const app=await boot(t,{signedIn:true});
+  assert.equal(app.$('#app-shell').hidden,false);
+  app.auth('SIGNED_OUT',null);await tick();
+  assert.equal(app.$('#app-shell').hidden,true);
+  assert.equal(app.$('#account-dialog').parentNode.id,'login-auth-slot');
+});
