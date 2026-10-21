@@ -285,6 +285,8 @@ body[data-input="pointer"] :is(.button,.icon-button,.nav-item,.segmented button)
   :root,body[data-sidebar="compact"] { --sidebar-width:0px; }
   #sidebar,body[data-sidebar="compact"] #sidebar { display:flex; top:0; width:285px; max-width:calc(100vw - 48px); padding:24px 16px; height:100dvh; transform:translateX(-100%); }
   #sidebar.open { transform:translateX(0); }
+  body[data-input="pointer"] #sidebar { transition:transform 140ms var(--ease-drawer); }
+  body[data-input="pointer"] #sidebar.open { transition-duration:220ms; }
   body[data-sidebar="compact"] .sidebar-top { flex-direction:row; }
   body[data-sidebar="compact"] .brand-name,body[data-sidebar="compact"] .workspace-tag,body[data-sidebar="compact"] .sidebar-section,body[data-sidebar="compact"] .profile>div,body[data-sidebar="compact"] .local-dot,body[data-sidebar="compact"] .search-label { display:revert; }
   body[data-sidebar="compact"] .workspace-tag { display:flex; }

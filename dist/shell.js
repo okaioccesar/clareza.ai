@@ -36,8 +36,8 @@
   collapse.onclick=()=>{compact=!compact;try{localStorage.setItem('clareza.sidebar',compact?'compact':'expanded');}catch{}sync();};
   mobile.addEventListener('change',()=>closeMenu());
   const previousNavigate=navigate;
-  navigate=function(...args){previousNavigate(...args);sync();};
-  document.addEventListener('click',event=>{if(event.target.closest('#sidebar a[href^="#"]'))closeMenu();});
+  navigate=function(...args){const wasOpen=mobile.matches&&sidebar.classList.contains('open');previousNavigate(...args);sync();if(wasOpen)$('#view').focus({preventScroll:true});};
+  document.addEventListener('click',event=>{if(event.target.closest('#sidebar a[href^="#"]')){const wasOpen=mobile.matches&&sidebar.classList.contains('open');closeMenu();if(wasOpen)$('#view').focus({preventScroll:true});}});
   const previousNav=renderNav;
   renderNav=function(){previousNav();document.querySelectorAll('#sidebar .nav-item').forEach(button=>{button.title=button.textContent.trim();if(button.classList.contains('active'))button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});};
   sync();renderNav();

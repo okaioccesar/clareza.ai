@@ -4,7 +4,7 @@ Publicado em produção: https://clareza-lake.vercel.app
 
 Projeto `clareza`, identificado por `prj_dT2lPV1cyKj9LnUGX2FluUl426JR`. A publicação inicial está em `READY` e exige autenticação da Vercel em todos os endereços. O vínculo local fica em `.vercel/project.json`, ignorado pelo Git. A integração confirmou a publicação e a proteção, mas negou a inspeção do conteúdo autenticado e dos logs com HTTP 403; essa inspeção não foi concluída.
 
-A interface usa `dist/`; a função `api/chat.js` atende a IA online. Não há dependências adicionais. A navegação usa fragmentos (`/#space`, `/#today`), portanto não necessita de regra de redirecionamento de rotas.
+A interface usa `dist/`; a função `api/chat.js` atende a IA online. Não há dependências de execução; o jsdom é usado apenas nos testes de desenvolvimento. A navegação usa fragmentos (`/#space`, `/#today`), portanto não necessita de regra de redirecionamento de rotas.
 
 ## Assistente e aparência
 

@@ -7,6 +7,6 @@
     "test": "node --test",
     "preview": "node preview.cjs"
   },
-  "engines": { "node": ">=24" },
+  "engines": { "node": "24.x" },
   "devDependencies": { "jsdom": "30.1.3" }
 }

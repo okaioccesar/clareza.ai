@@ -50,6 +50,7 @@ test('barra lateral recolhível salva preferência e menu móvel isola conteúdo
   const desktop=boot(t);desktop.$('#sidebar-collapse').click();assert.equal(desktop.w.document.body.dataset.sidebar,'compact');assert.equal(desktop.w.localStorage.getItem('clareza.sidebar'),'compact');assert.equal(desktop.$('#sidebar-collapse').getAttribute('aria-expanded'),'false');
   const mobile=boot(t,{mobile:true});assert.equal(mobile.$('#sidebar').inert,true);mobile.$('#mobile-menu').click();assert.equal(mobile.$('main').inert,true);assert.equal(mobile.$('#sidebar').inert,false);assert.equal(mobile.$('#sidebar-backdrop').hidden,false);
   mobile.$('#sidebar-backdrop').click();assert.equal(mobile.$('main').inert,false);assert.equal(mobile.$('#sidebar').inert,true);assert.equal(mobile.w.document.activeElement.id,'mobile-menu');
+  mobile.$('#mobile-menu').click();mobile.$('#navigation [data-view="all"]').click();assert.equal(mobile.$('main').inert,false);assert.equal(mobile.w.document.activeElement.id,'view');
 });
 test('assistente continua criando propostas e as tarefas escapam conteúdo HTML',t=>{
   const app=boot(t);app.$('[data-action="day-assistant"]').click();assert.equal(app.$('#assistant-dialog').open,true);assert.equal(app.$('#assistant-input').value,'Organize meu dia');
