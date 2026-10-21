@@ -1,5 +1,8 @@
 .vercel/
 node_modules/
+supabase/.temp/
+supabase/.branches/
+dist/cloud-client.js
 .env
 .env.*
 !.env.example

@@ -4,9 +4,21 @@
   "private": true,
   "description": "Tarefas, projetos e ideias em um espaço pessoal.",
   "scripts": {
+    "build": "node scripts/build.cjs",
+    "typecheck": "tsc --noEmit",
     "test": "node --test",
     "preview": "node preview.cjs"
   },
-  "engines": { "node": "24.x" },
-  "devDependencies": { "jsdom": "30.1.3" }
+  "engines": {
+    "node": "24.x"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "esbuild": "0.28.2",
+    "jsdom": "30.1.3",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.118.0"
+  }
 }
