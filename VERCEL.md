@@ -2,7 +2,9 @@
 
 Publicado em produção: https://clareza-lake.vercel.app
 
-Projeto `clareza`, identificado por `prj_dT2lPV1cyKj9LnUGX2FluUl426JR`. A publicação inicial está em `READY` e exige autenticação da Vercel em todos os endereços. O vínculo local fica em `.vercel/project.json`, ignorado pelo Git. A integração confirmou a publicação e a proteção, mas negou a inspeção do conteúdo autenticado e dos logs com HTTP 403; essa inspeção não foi concluída.
+Projeto `clareza`, identificado por `prj_dT2lPV1cyKj9LnUGX2FluUl426JR`. O domínio de produção é público, sem login, conforme confirmação do proprietário. A Vercel usa Standard Protection (`prod_deployment_urls_and_all_previews`), mantendo as prévias e os endereços únicos de deployment protegidos. O vínculo local fica em `.vercel/project.json`, ignorado pelo Git.
+
+A liberação foi verificada sem cookies ou credenciais: a raiz de produção retornou HTTP 200 com o HTML do aplicativo; `/api/chat` retornou HTTP 200 com `configured: false`; o endereço único do deployment redirecionou para autenticação. Os relatos de inspeção bloqueada nas publicações antigas, abaixo, são históricos.
 
 A interface usa `dist/`; a função `api/chat.js` atende a IA online. Não há dependências de execução; o jsdom é usado apenas nos testes de desenvolvimento. A navegação usa fragmentos (`/#space`, `/#today`), portanto não necessita de regra de redirecionamento de rotas.
 
@@ -12,7 +14,7 @@ O seletor de tema oferece Claro, Escuro e Sistema, com preferência salva no nav
 
 Para **IA online**, configure `AI_GATEWAY_API_KEY` no ambiente de produção da Vercel e publique novamente, ou use o OIDC automático da Vercel quando autorizado ao AI Gateway. O modelo padrão `openai/gpt-4.1-mini` foi verificado na lista oficial; `AI_GATEWAY_MODEL` permite selecionar outro ID válido. O uso online depende de credenciais, acesso e créditos do AI Gateway. Nenhuma chave deve ser colocada em `dist/`, no chat ou no Git. Não houve compra ou ativação de cobrança automática.
 
-O modo online envia mensagem, títulos, prazos, prioridades, nomes de áreas/projetos e histórico recente. Não envia notas ou conteúdo das páginas. A interface informa isso antes do envio. A resposta da IA é tratada como proposta não confiável e validada antes da confirmação. A proteção por login da Vercel deve continuar habilitada, inclusive para `/api/chat`; o limite de frequência da função é apenas uma proteção local por instância.
+O modo online envia mensagem, títulos, prazos, prioridades, nomes de áreas/projetos e histórico recente. Não envia notas ou conteúdo das páginas. A interface informa isso antes do envio. A resposta da IA é tratada como proposta não confiável e validada antes da confirmação. No domínio público, `/api/chat` também é acessível sem login e atualmente informa que não há IA configurada. O limite de frequência da função é apenas uma proteção local por instância; habilitar um provedor pago para visitantes exige considerar autenticação, limites compartilhados e orçamento.
 
 ## Publicação
 
