@@ -79,7 +79,20 @@ main { margin-left:var(--sidebar-width); min-height:100dvh; }
 header { height:80px; padding:0 32px; border:0; background:var(--paper); }
 .breadcrumb,.breadcrumb strong { font-size:13px; }
 .header-end { gap:12px; }
-.theme-control select { min-height:38px; max-width:108px; font-size:12px; border-radius:10px; padding:9px 20px 9px 12px; background:var(--card); }
+.theme-switch { display:inline-flex; flex-shrink:0; gap:2px; padding:3px; border:1px solid var(--line); border-radius:999px; background:var(--surface); }
+.theme-switch button { display:grid; place-items:center; width:44px; height:44px; padding:0; border:0; border-radius:50%; background:transparent; color:var(--muted); }
+.theme-switch button[aria-pressed="true"] { background:var(--card); color:var(--accent-ink); box-shadow:0 1px 4px #10213b12; }
+.theme-switch svg { width:20px; height:20px; }
+.theme-switch button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.appearance-setting { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 0; margin-bottom:16px; border-bottom:1px solid var(--line); }
+.appearance-setting strong,.appearance-setting small { display:block; }
+.appearance-setting select { width:auto; min-height:44px; flex-shrink:0; }
+/* Theme transitions are opt-in for a pointer action, never for the first paint. */
+.theme-changing :is(body,header,#sidebar,.login-landing,.login-story,.login-preview,.overview-card,.task-row,.theme-switch,input,textarea,select) {
+  transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease;
+}
+body[data-input="pointer"] .theme-switch button { transition:background-color 160ms ease,color 160ms ease,transform 140ms var(--ease-out); }
+body[data-input="pointer"] .theme-switch button:active { transform:scale(.92); }
 .assistant-trigger { font-size:12px!important; min-height:38px!important; padding:9px 14px!important; border-radius:10px; }
 #quick-create { width:38px; height:38px; border-radius:10px; color:var(--accent-ink); }
 #save-status { font-size:11px; }
@@ -335,7 +348,7 @@ body[data-input="pointer"] :is(.button,.icon-button,.nav-item,.segmented button)
   .breadcrumb { font-size:0; gap:0; flex:1; }
   .breadcrumb>span { display:none; }
   .breadcrumb strong { font-size:12px; }
-  .theme-control select { min-height:40px; max-width:94px; font-size:16px; padding:8px 3px 8px 7px; }
+  .appearance-setting { align-items:flex-start; flex-direction:column; }
   .assistant-trigger { font-size:0!important; padding:10px!important; }
   .assistant-trigger svg { width:18px; height:18px; }
   .view { padding:8px 14px 32px; }

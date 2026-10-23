@@ -1,20 +1,66 @@
+/* Apply the saved theme in the head, before the first paint. */
 (function () {
-  const key = 'clareza.theme';
-  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  const storageKey = 'clareza.theme';
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+  const root = document.documentElement;
   let preference = 'system';
-  try { const stored = localStorage.getItem(key); if (['light','dark','system'].includes(stored)) preference = stored; } catch {}
-  function apply(value, persist = false) {
-    preference = ['light','dark','system'].includes(value) ? value : 'system';
-    const dark = preference === 'dark' || preference === 'system' && media.matches;
-    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#111722' : '#f4f6fa');
-    document.querySelectorAll('[data-theme-picker]').forEach(select => select.value = preference);
-    if (persist) { try { localStorage.setItem(key, preference); } catch {} }
+  let transitionTimer;
+
+  function normalize(value) {
+    return ['light', 'dark', 'system'].includes(value) ? value : 'system';
   }
-  apply(preference);
-  media.addEventListener('change', () => { if (preference === 'system') apply('system'); });
-  document.addEventListener('DOMContentLoaded', () => apply(preference));
-  document.addEventListener('change', event => { if (event.target.matches('[data-theme-picker]')) apply(event.target.value, true); });
-  window.addEventListener('storage', event => { if (event.key === key) apply(event.newValue || 'system'); });
+
+  function stopTransition() {
+    clearTimeout(transitionTimer);
+    root.classList.remove('theme-changing');
+  }
+
+  function applyTheme(value, { persist = false, animate = false } = {}) {
+    preference = normalize(value);
+    const dark = preference === 'dark' || (preference === 'system' && systemTheme.matches);
+    const theme = dark ? 'dark' : 'light';
+
+    stopTransition();
+    if (animate && root.dataset.theme !== theme) {
+      root.classList.add('theme-changing');
+      transitionTimer = setTimeout(stopTransition, 220);
+    }
+
+    root.dataset.theme = theme;
+    root.style.colorScheme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#111722' : '#f4f6fa');
+    document.querySelectorAll('[data-theme-picker]').forEach(select => {
+      select.value = preference;
+    });
+    document.querySelectorAll('[data-theme-choice]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme));
+    });
+
+    if (persist) {
+      try { localStorage.setItem(storageKey, preference); } catch { /* Storage can be blocked. */ }
+    }
+  }
+
+  try { preference = normalize(localStorage.getItem(storageKey)); } catch {}
+  applyTheme(preference);
+
+  systemTheme.addEventListener('change', () => {
+    if (preference === 'system') applyTheme('system');
+  });
+  document.addEventListener('DOMContentLoaded', () => applyTheme(preference));
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-theme-choice]');
+    if (button) applyTheme(button.dataset.themeChoice, { persist: true, animate: event.detail > 0 });
+  });
+  document.addEventListener('change', event => {
+    if (event.target.matches('[data-theme-picker]')) applyTheme(event.target.value, { persist: true });
+  });
+  document.addEventListener('keydown', stopTransition, { capture: true });
+  window.addEventListener('storage', event => {
+    // Clearing the preference in another tab restores the system theme.
+    if (event.key === storageKey || event.key === null) {
+      try { if (event.storageArea && event.storageArea !== localStorage) return; } catch {}
+      applyTheme(event.newValue);
+    }
+  });
 })();

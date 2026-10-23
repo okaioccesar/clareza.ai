@@ -19,7 +19,14 @@
 
 <body>
     <section id="login-landing" class="login-landing" aria-label="Bem-vindo ao clareza.ai">
-        <div class="login-story"><a class="login-brand" href="/">clareza<span>.ai</span></a><div class="login-story-content"><span class="overline">MENOS RUÍDO. MAIS DIREÇÃO.</span><h1>Um lugar para<br>clarear suas ideias.</h1><p>Organize o que importa e encontre espaço para fazer acontecer. Suas tarefas, projetos e ideias, juntos.</p><div class="login-preview" aria-hidden="true"><span class="overline">UM DIA COM MAIS CLAREZA</span><h3>Um passo de cada vez.</h3><div><span class="login-check">✓</span> Tirar uma ideia do papel</div><div><span class="login-check">✓</span> Dar atenção ao que importa</div><div><span class="login-check pending">○</span> Reservar um tempo para você</div><span class="login-preview-note">Seu ritmo. Seu espaço.</span></div></div><p class="login-footnote">Tarefas · Projetos · Ideias</p></div>
+        <div class="login-story"><div class="login-top"><a class="login-brand" href="/">clareza<span>.ai</span></a><div class="theme-switch" role="group" aria-label="Aparência">
+                <button type="button" data-theme-choice="light" aria-label="Tema claro" aria-pressed="false" title="Tema claro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+                </button>
+                <button type="button" data-theme-choice="dark" aria-label="Tema escuro" aria-pressed="false" title="Tema escuro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/></svg>
+                </button>
+            </div></div><div class="login-story-content"><span class="overline">MENOS RUÍDO. MAIS DIREÇÃO.</span><h1>Um lugar para<br>clarear suas ideias.</h1><p>Organize o que importa e encontre espaço para fazer acontecer. Suas tarefas, projetos e ideias, juntos.</p><div class="login-preview" aria-hidden="true"><span class="overline">UM DIA COM MAIS CLAREZA</span><h3>Um passo de cada vez.</h3><div><span class="login-check">✓</span> Tirar uma ideia do papel</div><div><span class="login-check">✓</span> Dar atenção ao que importa</div><div><span class="login-check pending">○</span> Reservar um tempo para você</div><span class="login-preview-note">Seu ritmo. Seu espaço.</span></div></div><p class="login-footnote">Tarefas · Projetos · Ideias</p></div>
         <div class="login-access"><div id="login-auth-slot"></div><noscript>Ative o JavaScript para entrar no clareza.ai.</noscript><p class="login-privacy">Seu espaço pessoal, conectado à sua conta.</p></div>
     </section>
     <div id="app-shell" hidden inert>
@@ -56,7 +63,14 @@
         <header><button id="mobile-menu" class="icon-button" aria-label="Abrir menu" aria-expanded="false"><span
                     data-icon="menu"></span></button>
             <div class="breadcrumb">Meu espaço <span>/</span> <strong id="breadcrumb">Hoje</strong></div>
-            <div class="header-end"><label class="theme-control"><span class="sr-only">Tema</span><select data-theme-picker aria-label="Tema"><option value="system">Sistema</option><option value="light">Claro</option><option value="dark">Escuro</option></select></label><button id="assistant-open" class="button secondary assistant-trigger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 3V6a2 2 0 0 1 2-2Z"/><path d="M7 9h10M7 13h6"/></svg>Assistente</button><span id="save-status" role="status">Salvo localmente</span><button
+            <div class="header-end"><div class="theme-switch" role="group" aria-label="Aparência">
+                <button type="button" data-theme-choice="light" aria-label="Tema claro" aria-pressed="false" title="Tema claro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+                </button>
+                <button type="button" data-theme-choice="dark" aria-label="Tema escuro" aria-pressed="false" title="Tema escuro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/></svg>
+                </button>
+            </div><button id="assistant-open" class="button secondary assistant-trigger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 3V6a2 2 0 0 1 2-2Z"/><path d="M7 9h10M7 13h6"/></svg>Assistente</button><span id="save-status" role="status">Salvo localmente</span><button
                     id="quick-create" class="icon-button" aria-label="Criar tarefa"><span
                         data-icon="plus"></span></button></div>
         </header>
@@ -84,8 +98,9 @@
     <dialog id="settings-dialog">
         <div class="dialog-top"><span class="overline">SEU ESPAÇO</span><button class="icon-button" data-close
                 aria-label="Fechar configurações"><span data-icon="x"></span></button></div>
-        <h2>Seus dados, com você.</h2>
-        <p class="muted">Exporte uma cópia de tarefas, projetos e páginas. Entre na sua conta para sincronizar entre dispositivos; o modo local continua disponível.</p>
+        <h2>Seu espaço, do seu jeito.</h2>
+        <label class="appearance-setting" for="theme-preference"><span><strong>Aparência</strong><small class="muted">Escolha um tema ou acompanhe seu dispositivo.</small></span><select id="theme-preference" data-theme-picker><option value="system">Sistema</option><option value="light">Claro</option><option value="dark">Escuro</option></select></label>
+        <p class="muted">Exporte uma cópia de tarefas, projetos e páginas. Sua conta sincroniza entre dispositivos e mantém uma cópia neste navegador.</p>
         <div class="settings-actions"><button class="button primary" id="export"><span
                     data-icon="download"></span>Exportar meu espaço</button><button class="button secondary"
                 id="import"><span data-icon="upload"></span>Importar uma cópia</button><input id="import-file"

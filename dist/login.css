@@ -1,5 +1,6 @@
 /* Account entry and workspace access gate. */
 [hidden]{display:none!important}
+.login-top { display:flex; align-items:center; justify-content:space-between; gap:20px; }
 #app-shell:not([hidden]){display:contents}
 .login-landing{min-height:100svh;display:grid;grid-template-columns:1.1fr 1fr;width:100%;background:var(--paper)}
 .login-story{padding:44px clamp(28px,6vw,100px);background:var(--hero);display:flex;flex-direction:column;border-right:1px solid var(--line)}
