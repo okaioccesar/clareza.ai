@@ -9,7 +9,9 @@ function boot(t,{tasks=[],areas=[],projects=[],pages=[],mobile=false,storageBloc
   dom.window.document.querySelector("#app-shell").hidden=false;
   dom.window.document.querySelector("#app-shell").removeAttribute("inert");
   dom.window.document.querySelector("#login-landing").hidden=true;
-  const w=dom.window;w.matchMedia=query=>({matches:query.includes('max-width')?mobile:false,addEventListener(){},removeEventListener(){}});w.scrollTo=()=>{};w.structuredClone=structuredClone;w.crypto.randomUUID=crypto.randomUUID;
+  const w=dom.window,mediaQueries=[];
+  w.matchMedia=query=>{const listeners=[];const media={matches:query.includes('max-width')?mobile:false,addEventListener(name,fn){listeners.push(fn)},removeEventListener(){}};mediaQueries.push({query,media,listeners});return media;};
+  w.scrollTo=()=>{};w.structuredClone=structuredClone;w.crypto.randomUUID=crypto.randomUUID;
   w.HTMLDialogElement.prototype.showModal=function(){this.open=true};w.HTMLDialogElement.prototype.close=function(){this.open=false};
   w.localStorage.setItem('clareza.workspace.v3',JSON.stringify({tasks,areas,projects,pages,daily:{},scratch:''}));
   if(storageBlocked)w.Storage.prototype.setItem=function(){throw Error('quota exceeded')};
@@ -18,7 +20,8 @@ function boot(t,{tasks=[],areas=[],projects=[],pages=[],mobile=false,storageBloc
   const $=selector=>w.document.querySelector(selector),data=()=>JSON.parse(w.eval('JSON.stringify(state)'));
   const input=(selector,value)=>{const el=$(selector);el.value=value;el.dispatchEvent(new w.Event('input',{bubbles:true}));};
   const submit=()=>$('#quick-task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
-  return {w,$,data,input,submit};
+  const resize=mobile=>mediaQueries.filter(item=>item.query.includes('max-width')).forEach(({media,listeners})=>{media.matches=mobile;listeners.forEach(listener=>listener(media));});
+  return {w,$,data,input,submit,resize};
 }
 test('interface cria tarefa, atualiza resumo e desfaz sem apagar outros registros',t=>{
   const app=boot(t,{tasks:[{id:'old',title:'Tarefa existente'}]});
@@ -63,4 +66,32 @@ test('assistente continua criando propostas e as tarefas escapam conteúdo HTML'
 test('atalho de pular navegação mantém a rota e foca o conteúdo',t=>{
   const app=boot(t);app.w.eval("route={view:'all',id:''};render()");app.$('.skip-link').click();
   assert.equal(app.w.document.activeElement.id,'view');assert.equal(app.w.eval('route.view'),'all');assert.equal(app.w.location.hash,'');
+});
+
+test('redimensionar entre desktop e celular não deixa foco em controles ocultos',t=>{
+  const app=boot(t);
+  app.$('#navigation .nav-item').focus();
+  app.resize(true);
+  assert.equal(app.$('#sidebar').inert,true);
+  assert.equal(app.w.document.activeElement.id,'mobile-menu');
+  app.resize(false);
+  assert.equal(app.$('#sidebar').inert,false);
+  assert.equal(app.w.document.activeElement.id,'view');
+});
+
+test('menu móvel ignora campos desabilitados e fora da ordem de tabulação',t=>{
+  const app=boot(t,{mobile:true});
+  const sidebar=app.$('#sidebar');
+  sidebar.insertAdjacentHTML('beforeend','<input disabled><input tabindex="-1">');
+  // JSDOM has no layout; visible candidates receive a synthetic rectangle.
+  sidebar.querySelectorAll('a,button,input').forEach(el=>{el.getClientRects=()=>[{}];});
+  app.$('#mobile-menu').click();
+  app.$('#settings-open').focus();
+  const tab=new app.w.KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true});
+  app.$('#settings-open').dispatchEvent(tab);
+  assert.equal(tab.defaultPrevented,true);
+  assert.equal(app.w.document.activeElement,app.$('#sidebar .brand'));
+  app.w.document.dispatchEvent(new app.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+  assert.equal(app.$('main').inert,false);
+  assert.equal(app.w.document.activeElement.id,'mobile-menu');
 });

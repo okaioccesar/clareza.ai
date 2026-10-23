@@ -56,7 +56,6 @@ header { height:73px; padding:0 38px; background:var(--paper); border-color:var(
 .header-end { gap:15px; }
 #save-status { color:var(--muted); font-size:10px; }
 #quick-create { border:1px solid var(--line); border-radius:7px; background:var(--card); color:var(--muted); width:32px; height:32px; }
-.theme-control select { border:1px solid var(--line); background:var(--card); color:var(--muted); font-size:11px; padding:8px 23px 8px 10px; border-radius:7px; max-width:100px; }
 .assistant-trigger { min-height:33px!important; padding:8px 11px!important; font-size:11px!important; }
 .assistant-trigger svg { width:14px; height:14px; }
 .view { max-width:1440px; padding:36px 42px 65px; }
@@ -147,7 +146,7 @@ h2 { font-size:15px; font-weight:550; color:var(--ink); }
 .segmented button { font-size:11px; color:var(--muted); padding:8px 11px; }
 .segmented button.selected { background:var(--raised); color:var(--ink); box-shadow:none; }
 .filters select,.inline-search input { color:var(--muted); background:transparent; font-size:11px; }
-.filters select option,form select option,.theme-control option { background:var(--raised); color:var(--ink); }
+.filters select option,form select option { background:var(--raised); color:var(--ink); }
 .inline-search { color:var(--muted); }
 .board-column { background:var(--surface); border:1px solid var(--line); padding:17px; border-radius:10px; }
 .column-heading h3 { color:var(--ink); font-size:12px; }
@@ -298,7 +297,6 @@ form input::placeholder,form textarea::placeholder { color:var(--muted); }
   .breadcrumb { font-size:10px; gap:7px; }
   .breadcrumb strong { font-size:11px; }
   .header-end { gap:7px; }
-  .theme-control select { font-size:16px; max-width:93px; padding:7px 3px 7px 6px; }
   .assistant-trigger { padding:9px!important; font-size:0!important; min-width:37px; }
   .assistant-trigger svg { width:18px; height:18px; }
   .icon-button { min-height:35px; min-width:32px; }

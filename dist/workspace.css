@@ -88,7 +88,7 @@ header { height:80px; padding:0 32px; border:0; background:var(--paper); }
 .appearance-setting strong,.appearance-setting small { display:block; }
 .appearance-setting select { width:auto; min-height:44px; flex-shrink:0; }
 /* Theme transitions are opt-in for a pointer action, never for the first paint. */
-.theme-changing :is(body,header,#sidebar,.login-landing,.login-story,.login-preview,.overview-card,.task-row,.theme-switch,input,textarea,select) {
+.theme-changing :is(body,header,#sidebar,.login-landing,.login-story,.login-preview,.overview-panel,.task-panel,.projects-panel,.day-progress,.daily-note,.quick-note,.task-row,.theme-switch,input,textarea,select) {
   transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease;
 }
 body[data-input="pointer"] .theme-switch button { transition:background-color 160ms ease,color 160ms ease,transform 140ms var(--ease-out); }
@@ -276,19 +276,48 @@ body[data-sidebar="compact"] #sidebar-collapse svg { transform:rotate(180deg); }
 body[data-input="pointer"] :is(.button,.icon-button,.nav-item,.segmented button) { transition:transform 140ms var(--ease-out),background-color 140ms ease,color 140ms ease,border-color 140ms ease; }
 body[data-input="pointer"] :is(.button,.icon-button,.nav-item,.segmented button):active { transform:scale(.98); }
 @media (hover:hover) and (pointer:fine) {
+  .theme-switch button:hover { color:var(--accent-ink); }
   .task-row:hover { background:var(--surface); }
   .nav-item:hover,.icon-button:hover { background:var(--surface); }
   .nav-item.active:hover { background:var(--accent-soft); }
   .project-card:hover,.page-card:hover,.area-card:hover { border-color:var(--accent); }
 }
 @supports (transition-behavior:allow-discrete) {
-  body[data-input="pointer"] dialog:not(.command-dialog) { opacity:0; transform:scale(.98); transition:opacity 120ms var(--ease-out),transform 120ms var(--ease-out),display 120ms allow-discrete,overlay 120ms allow-discrete; }
-  body[data-input="pointer"] dialog[open]:not(.command-dialog) { opacity:1; transform:scale(1); transition-duration:180ms; }
-  body[data-input="pointer"] .assistant-dialog { transform:translateX(24px); }
-  body[data-input="pointer"] .assistant-dialog[open] { transform:translateX(0); }
+  /* Keep the inline login form and frequent command search immediate. */
+  body[data-input="pointer"] #app-shell dialog:not(.command-dialog) {
+    opacity:0;
+    transform:scale(.98);
+    transition:opacity 120ms var(--ease-out),transform 120ms var(--ease-out),display 120ms allow-discrete,overlay 120ms allow-discrete;
+  }
+  body[data-input="pointer"] #app-shell dialog[open]:not(.command-dialog) {
+    opacity:1;
+    transform:scale(1);
+    transition-duration:200ms;
+  }
+  body[data-input="pointer"] #app-shell .assistant-dialog { transform:translateX(24px); }
+  body[data-input="pointer"] #app-shell .assistant-dialog[open] { transform:translateX(0); }
+  body[data-input="pointer"] #app-shell dialog:not(.command-dialog)::backdrop {
+    opacity:0;
+    transition:opacity 160ms ease,display 160ms allow-discrete,overlay 160ms allow-discrete;
+  }
+  body[data-input="pointer"] #app-shell dialog[open]:not(.command-dialog)::backdrop { opacity:1; }
+  body[data-input="pointer"] .sidebar-backdrop {
+    opacity:1;
+    transition:opacity 180ms ease,display 180ms allow-discrete;
+  }
+  body[data-input="pointer"] .sidebar-backdrop[hidden] { opacity:0; pointer-events:none; }
+  body[data-input="pointer"] #toast {
+    opacity:1;
+    translate:0 0;
+    transition:opacity 160ms ease,translate 180ms var(--ease-out),display 180ms allow-discrete;
+  }
+  body[data-input="pointer"] #toast[hidden] { opacity:0; translate:0 6px; pointer-events:none; }
   @starting-style {
-    body[data-input="pointer"] dialog[open]:not(.command-dialog) { opacity:0; transform:scale(.98); }
-    body[data-input="pointer"] .assistant-dialog[open] { transform:translateX(24px); }
+    body[data-input="pointer"] #app-shell dialog[open]:not(.command-dialog) { opacity:0; transform:scale(.98); }
+    body[data-input="pointer"] #app-shell .assistant-dialog[open] { transform:translateX(24px); }
+    body[data-input="pointer"] #app-shell dialog[open]:not(.command-dialog)::backdrop,
+    body[data-input="pointer"] .sidebar-backdrop:not([hidden]) { opacity:0; }
+    body[data-input="pointer"] #toast:not([hidden]) { opacity:0; translate:0 6px; }
   }
 }
 @media (min-width:1800px) { .view:not(.today) { margin-inline:auto; max-width:1496px; } }
