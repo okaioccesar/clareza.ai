@@ -21,6 +21,7 @@
     collapse.title=collapse.getAttribute('aria-label');
   }
   function closeMenu(restore=false) { sidebar.classList.remove('open');sync();if(restore)menu.focus(); }
+  document.addEventListener('clareza:workspace-locked',()=>closeMenu());
   menu.onclick=()=>{const open=sidebar.classList.toggle('open');sync();if(open)$('#navigation .nav-item')?.focus();};
   backdrop.onclick=()=>closeMenu(true);
   $('.skip-link').onclick=event=>{event.preventDefault();$('#view').focus();};

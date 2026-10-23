@@ -3,12 +3,12 @@ const {JSDOM,VirtualConsole}=require('jsdom'),D=require('./dist/domain.js');
 const key='clareza.workspace.v3',uid='11111111-1111-4111-8111-111111111111';
 const empty=()=>D.normalize({tasks:[]}),session={access_token:'test-session-token',user:{id:uid,email:'owner@test.invalid'}};
 const tick=()=>new Promise(resolve=>setTimeout(resolve,5));
-async function boot(t,{guest=empty(),signedIn=false,cache=null,offline=false,googleEnabled=true,oauthError=null,sessionError=null,url='https://clareza.example/'}={}){
+async function boot(t,{guest=empty(),signedIn=false,cache=null,offline=false,mobile=false,googleEnabled=true,oauthError=null,sessionError=null,url='https://clareza.example/'}={}){
   const errors=[],virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e));
   const dom=new JSDOM(fs.readFileSync('dist/index.html','utf8'),{url,runScripts:'outside-only',pretendToBeVisual:true,virtualConsole});
   const w=dom.window,$=selector=>w.document.querySelector(selector);let active=signedIn?session:null,listener,networkDown=offline;
   const remote={revision:0,data:null},writes=[],oauthCalls=[];let holdGet=null,holdPut=null,clientOptions;
-  w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.structuredClone=structuredClone;w.crypto.randomUUID=crypto.randomUUID;
+  w.matchMedia=query=>({matches:mobile&&query.includes('max-width'),addEventListener(){}});w.scrollTo=()=>{};w.structuredClone=structuredClone;w.crypto.randomUUID=crypto.randomUUID;
   Object.defineProperty(w.navigator,'onLine',{get:()=>!networkDown});w.HTMLDialogElement.prototype.showModal=function(){this.open=true};w.HTMLDialogElement.prototype.close=function(){this.open=false};
   w.localStorage.setItem(key,JSON.stringify(guest));if(cache)w.localStorage.setItem(key+'.account.'+uid,JSON.stringify(cache));
   w.ClarezaAuth={createClient:(_url,_key,options)=>{clientOptions=options;return {auth:{onAuthStateChange(fn){listener=fn},getSession:async()=>({data:{session:active},error:sessionError}),signInWithOAuth:async options=>{oauthCalls.push(options);return {data:{url:'https://example.supabase.co/auth/v1/authorize'},error:oauthError}},signInWithPassword:async()=>{active=session;listener('SIGNED_IN',active);return {data:{session:active}}},signOut:async()=>{active=null;listener('SIGNED_OUT',null);return {}},signUp:async()=>({data:{session:null}}),resetPasswordForEmail:async()=>({}),updateUser:async()=>({})}}}};
@@ -151,4 +151,13 @@ test('restored session opens workspace and lost session blocks it again',async t
   app.auth('SIGNED_OUT',null);await tick();
   assert.equal(app.$('#app-shell').hidden,true);
   assert.equal(app.$('#account-dialog').parentNode.id,'login-auth-slot');
+});
+
+test('landing fecha menu móvel ao perder a sessão e permite usar o espaço após entrar de novo',async t=>{
+  const app=await boot(t,{signedIn:true,mobile:true});app.$('#mobile-menu').click();
+  assert.equal(app.w.document.body.classList.contains('mobile-nav-open'),true);assert.equal(app.$('main').inert,true);
+  app.auth('SIGNED_OUT',null);await tick();
+  assert.equal(app.$('#login-landing').hidden,false);assert.equal(app.w.document.body.classList.contains('mobile-nav-open'),false);
+  assert.equal(app.$('#sidebar-backdrop').hidden,true);assert.equal(app.$('#mobile-menu').getAttribute('aria-expanded'),'false');
+  await app.login();assert.equal(app.$('#app-shell').hidden,false);assert.equal(app.$('main').inert,false);
 });

@@ -27,7 +27,9 @@
   dialog.before(dialogHome);
   function updateAccess(){
     const unlocked=!!account&&!!session&&!connecting&&phase!=='expired'&&authMode!=='recovery';
+    const wasUnlocked=!shell.hidden;
     shell.hidden=!unlocked;shell.inert=!unlocked;landing.hidden=unlocked;
+    if(wasUnlocked&&!unlocked)document.dispatchEvent(new Event('clareza:workspace-locked'));
     if(unlocked){
       if(dialog.parentNode===authSlot){dialog.close();dialogHome.after(dialog);$('#view').focus();}
     }else{

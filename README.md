@@ -16,7 +16,7 @@ npm run build
 npm run preview
 ```
 
-A prévia abre em `http://127.0.0.1:4187` e atende os arquivos e as APIs. Ela carrega `.env.local`, quando presente; esse arquivo é ignorado pelo Git. Copie os nomes de variáveis de `.env.example` e configure somente um projeto de desenvolvimento autorizado. Sem configuração, o modo local continua disponível. `npm run build` gera o cliente Supabase em `dist/cloud-client.js`.
+A prévia abre em `http://127.0.0.1:4187` e atende os arquivos e as APIs. Ela carrega `.env.local`, quando presente; esse arquivo é ignorado pelo Git. Copie os nomes de variáveis de `.env.example` e configure somente um projeto de desenvolvimento autorizado. Sem configuração, a landing aparece, mas o login fica indisponível e o espaço de trabalho permanece bloqueado. `npm run build` gera o cliente Supabase em `dist/cloud-client.js` e deve ser executado antes da prévia.
 
 ## Estrutura
 
@@ -43,3 +43,5 @@ Os testes cobrem os dados e a recorrência, propostas do assistente, tratamento 
 ## Entrada no aplicativo
 
 A página inicial apresenta a landing de acesso. O espaço de trabalho fica oculto e inativo até a sessão ser restaurada e os dados da conta serem carregados. Sair ou perder a sessão retorna à landing. Dados locais antigos continuam preservados para importação explícita depois do login. A API do espaço continua validando o token no servidor.
+
+Ao retornar à landing, o menu móvel é fechado e a rolagem é liberada. A sessão pode ser iniciada novamente sem deixar o conteúdo do aplicativo inativo. O teste de regressão cobre a perda da sessão com o menu aberto e a entrada seguinte.
