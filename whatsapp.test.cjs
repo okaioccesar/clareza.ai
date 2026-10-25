@@ -81,4 +81,21 @@ test('preview encaminha o webhook Web Request sem quebrar os bytes',async t=>{
   const result=await fetch(`http://127.0.0.1:${server.address().port}/api/whatsapp`);
   assert.equal(result.status,503);
   assert.equal(await result.text(),'WhatsApp integration is not enabled');
+  const settings={...env,SUPABASE_SERVICE_ROLE_KEY:''};
+  const original=Object.fromEntries(Object.keys(settings).map(key=>[key,process.env[key]]));
+  Object.assign(process.env,settings);
+  try {
+    const raw=JSON.stringify(payload(),null,2);
+    const signature='sha256='+createHmac('sha256',env.WHATSAPP_APP_SECRET).update(raw).digest('hex');
+    const signed=await fetch(`http://127.0.0.1:${server.address().port}/api/whatsapp`,{
+      method:'POST',body:raw,headers:{'content-type':'application/json','x-hub-signature-256':signature}
+    });
+    assert.equal(signed.status,503);
+    // Valid signature reached persistence; missing credentials intentionally stop it there.
+    assert.equal(await signed.text(),'Inbox temporarily unavailable');
+  } finally {
+    for(const [key,value] of Object.entries(original)) {
+      if(value===undefined)delete process.env[key];else process.env[key]=value;
+    }
+  }
 });
