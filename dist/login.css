@@ -198,3 +198,10 @@
     font-size: 26px;
   }
 }
+
+@media (max-width: 380px) {
+  .login-story { padding: 24px 20px; }
+  .login-top { gap: 8px; }
+  .login-brand { font-size: 24px; gap: 7px; }
+  .login-brand .brand-mark { width: 28px; height: 28px; }
+}
