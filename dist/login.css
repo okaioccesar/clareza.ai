@@ -26,14 +26,24 @@
   border-right: 1px solid var(--line);
 }
 .login-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 30px;
   font-weight: 650;
   letter-spacing: -1.5px;
   color: var(--ink);
   text-decoration: none;
 }
-.login-brand span {
+.login-brand .login-wordmark {
+  color: var(--ink);
+}
+.login-brand .brand-ai {
   color: var(--accent);
+}
+.login-brand .brand-mark {
+  width: 36px;
+  height: 36px;
 }
 .login-story-content {
   margin: auto 0;
@@ -58,9 +68,9 @@
   padding: 28px;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow: var(--shadow);
-  transform: rotate(-2deg);
+  transform: none;
   max-width: 390px;
 }
 .login-preview h3 {
