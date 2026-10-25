@@ -1,10 +1,14 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const {makeHandler} = require('./api/chat.js');
+const {makeHandler: createHandler} = require('./api/chat.js');
+const authenticatedClient = () => ({auth:{getUser:async()=>({data:{user:{id:'account-a'}}})}});
+function makeHandler(options = {}) {
+  return createHandler({...options,env:{SUPABASE_URL:'https://example.supabase.co',SUPABASE_PUBLISHABLE_KEY:'sb_publishable_test',...options.env},clientFactory:options.clientFactory || authenticatedClient});
+}
 async function call(handler, overrides = {}) {
   let content;
   const res = {statusCode:200,headers:{},setHeader(key,value){this.headers[key]=value},end(value){content=JSON.parse(value)}};
-  await handler({method:'POST',headers:{host:'clareza.example',origin:'https://clareza.example','content-type':'application/json'},body:{message:'Organize meu dia'},...overrides},res);
+  await handler({method:'POST',headers:{host:'clareza.example',origin:'https://clareza.example','content-type':'application/json',authorization:'Bearer user-token'},body:{message:'Organize meu dia'},...overrides},res);
   return {status:res.statusCode,headers:res.headers,body:content};
 }
 test('sem credenciais, informa a configuração sem chamar o provedor', async () => {
@@ -14,6 +18,16 @@ test('sem credenciais, informa a configuração sem chamar o provedor', async ()
   assert.equal(result.status,503);
   assert.match(result.body.error,/comandos locais/i);
   assert.equal(result.headers['Cache-Control'],'no-store');
+});
+
+test('chat exige sessão válida antes de consumir IA', async () => {
+  const options={env:{AI_GATEWAY_API_KEY:'test'},fetchImpl:()=>assert.fail('não deve consumir IA')};
+  const handler=makeHandler(options);
+  assert.equal((await call(handler,{headers:{host:'clareza.example','content-type':'application/json'}})).status,401);
+  const expired=makeHandler({...options,clientFactory:()=>({auth:{getUser:async()=>({data:{user:null},error:{message:'expired'}})}})});
+  assert.equal((await call(expired)).status,401);
+  const anonymous=makeHandler({...options,clientFactory:()=>({auth:{getUser:async()=>({data:{user:{id:'guest',is_anonymous:true}}})}})});
+  assert.equal((await call(anonymous)).status,401);
 });
 test('recusa origem externa e métodos ou conteúdo incompatíveis', async () => {
   const handler=makeHandler({env:{AI_GATEWAY_API_KEY:'test-key'},fetchImpl:()=>assert.fail('não deve chamar o provedor')});

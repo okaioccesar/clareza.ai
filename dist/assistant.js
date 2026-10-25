@@ -1,6 +1,6 @@
 (function () {
   const engine = ClarezaAssistant, messages = [], log = $('#assistant-messages');
-  let busy = false, mode = 'local', request = null;
+  let busy = false, mode = 'local', request = null, conversation = 0, cancelled = false;
   function scrollEnd() { log.scrollTop = log.scrollHeight; }
   function addMessage(role, text, plan) {
     const message = {id:D.id(),role,text,plan,status:'pending',baseTasks:(plan?.actions||[]).filter(a=>a.type==='update').map(a=>structuredClone(state.tasks.find(t=>t.id===a.id)))}; messages.push(message); renderMessage(message); scrollEnd(); return message;
@@ -42,31 +42,88 @@
     log.append(element);
   }
   function welcome() { addMessage('assistant','Posso ajudar a transformar pendências em tarefas e organizar seus próximos passos.\n\nComece com “Organize meu dia” ou “Crie revisar proposta amanhã”. Você revisa cada proposta antes de aplicar.'); }
-  function setBusy(value) { busy = value; $('#assistant-send').disabled = value; $('#assistant-input').disabled = value; $('#assistant-mode').disabled = value; $('#assistant-send').textContent = value ? 'Aguarde…' : 'Enviar'; }
+  function setBusy(value) {
+    busy = value;
+    $('#assistant-send').disabled = value;
+    $('#assistant-input').disabled = value;
+    $('#assistant-mode').disabled = value;
+    $('#assistant-clear').disabled = value;
+    $('#assistant-stop').hidden = !value || mode !== 'online';
+    $('#assistant-send').textContent = value ? 'Aguarde…' : 'Enviar';
+    log.setAttribute('aria-busy',String(value));
+  }
+  async function checkAvailability() {
+    const current = conversation;
+    try {
+      const response = await fetch('/api/chat');
+      const data = await response.json();
+      if (current !== conversation) return;
+      $('#assistant-availability').textContent = response.ok && data.configured
+        ? 'IA configurada. Selecione IA online para conversar.'
+        : 'IA ainda não configurada. Os comandos locais estão disponíveis.';
+    } catch {
+      if (current === conversation) $('#assistant-availability').textContent = 'Sem conexão com a IA. Você pode usar os comandos locais.';
+    }
+  }
+  function history() {
+    return messages.slice(0,-1).slice(-8).map(message => ({
+      role:message.role,
+      content:message.text + (message.plan?.actions.length
+        ? '\nProposta (' + message.status + '): ' + JSON.stringify(message.plan.actions)
+        : '')
+    }));
+  }
   function context() { return { today:D.dateKey(),tasks:state.tasks.filter(t => !t.done).slice(0,100).map(t => ({id:t.id,title:t.title,date:t.date,priority:t.priority,areaId:effectiveArea(t),projectId:t.projectId,status:t.status})),areas:state.areas.map(a => ({id:a.id,title:a.title})),projects:state.projects.filter(p => !p.archived).map(p => ({id:p.id,title:p.title})) }; }
   async function submit(text) {
     text = String(text || '').trim(); if (!text || busy) return;
     if (text.length > 4000) { toast('Use até 4.000 caracteres por mensagem.'); return; }
+    const current = conversation;
+    cancelled = false;
     addMessage('user',text); $('#assistant-input').value = ''; setBusy(true);
     const waiting = document.createElement('div'); waiting.className = 'chat-waiting'; waiting.textContent = mode === 'online' ? 'Preparando a proposta…' : 'Organizando…'; log.append(waiting); scrollEnd();
     try {
       let result;
       if (mode === 'online') {
-        request = new AbortController(); const timeout = setTimeout(() => request?.abort(),30000);
+        const controller = new AbortController();
+        request = controller;
+        const timeout = setTimeout(() => controller.abort(),35000);
         try {
-          const response = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:request.signal,body:JSON.stringify({message:text,context:context(),history:messages.slice(0,-1).filter(m => !m.plan).slice(-8).map(m => ({role:m.role,content:m.text}))})});
+          const accessToken = await window.ClarezaAccount?.accessToken();
+          if (current !== conversation || controller.signal.aborted) return;
+          if (!accessToken) throw new Error('Entre na sua conta para conversar com a IA.');
+          const response = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+accessToken},signal:controller.signal,body:JSON.stringify({message:text,context:context(),history:history()})});
           const data = await response.json(); if (!response.ok) throw new Error(data.error || 'A IA online não está disponível agora.'); result = engine.validatePlan(data,state);
-        } finally { clearTimeout(timeout); request = null; }
+        } finally { clearTimeout(timeout); if (request === controller) request = null; }
       } else result = engine.validatePlan(engine.parse(text,state),state);
+      if (current !== conversation) return;
+      if (cancelled) { waiting.remove(); addMessage('assistant','Resposta interrompida. Nenhuma tarefa foi alterada.'); return; }
       waiting.remove(); addMessage('assistant',result.message,result);
-    } catch (error) { waiting.remove(); addMessage('assistant',error.name === 'AbortError' ? 'A resposta demorou além do esperado. Tente novamente ou selecione Comandos locais.' : error.message + (mode === 'online' ? '\nVocê pode continuar usando Comandos locais, sem conexão com IA.' : '')); }
-    finally { setBusy(false); $('#assistant-input').focus(); scrollEnd(); }
+    } catch (error) {
+      if (current !== conversation) return;
+      waiting.remove();
+      addMessage('assistant',cancelled ? 'Resposta interrompida. Nenhuma tarefa foi alterada.' : error.name === 'AbortError' ? 'A resposta demorou além do esperado. Tente novamente ou selecione Comandos locais.' : error.message);
+      if (!cancelled) $('#assistant-input').value = text;
+    } finally {
+      waiting.remove();
+      if (current === conversation) { setBusy(false); if ($('#assistant-dialog').open) $('#assistant-input').focus(); scrollEnd(); }
+    }
   }
   $('#assistant-open').setAttribute('aria-label','Abrir assistente de tarefas');
-  $('#assistant-open').onclick = () => { if (!messages.length) welcome(); $('#assistant-dialog').showModal(); $('#assistant-input').focus(); };
+  $('#assistant-open').onclick = () => { if (!messages.length) welcome(); $('#assistant-dialog').showModal(); $('#assistant-input').focus(); checkAvailability(); };
   $('#assistant-form').onsubmit = e => { e.preventDefault(); submit($('#assistant-input').value); };
   $('#assistant-input').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); submit(e.currentTarget.value); } };
   document.querySelectorAll('[data-chat-prompt]').forEach(button => button.onclick = () => submit(button.dataset.chatPrompt));
   $('#assistant-mode').onchange = e => { mode = e.target.value; $('#assistant-mode-help').textContent = mode === 'local' ? 'Comandos locais: organiza tarefas neste navegador, sem enviar dados para uma IA.' : 'Ao enviar, sua mensagem, títulos, prazos, prioridades e a conversa atual são enviados à IA pelo Vercel AI Gateway. Notas e páginas não são enviadas. Requer IA configurada no servidor.'; };
   $('#assistant-clear').onclick = () => { if (busy) return; messages.splice(0); log.replaceChildren(); welcome(); };
+  $('#assistant-stop').onclick = () => { cancelled = true; request?.abort(); };
+  document.addEventListener('clareza:workspace-locked', () => {
+    conversation++;
+    request?.abort();
+    request = null;
+    messages.splice(0);
+    log.replaceChildren();
+    $('#assistant-input').value = '';
+    $('#assistant-dialog').close();
+    setBusy(false);
+  });
 })();

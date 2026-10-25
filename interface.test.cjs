@@ -2,6 +2,52 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const {JSDOM,VirtualConsole}=require('jsdom');
 const D=require('./dist/domain.js');
 const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','workspace-core.js','workspace.js','assistant-core.js','assistant.js'];
+
+test('chat mantém contexto de propostas e limpa a conversa ao perder acesso', async t => {
+  const app=boot(t);
+  const sent=[];
+  app.w.ClarezaAccount={accessToken:async()=> 'session-token'};
+  app.w.fetch=async(url,options)=>{
+    if(!options)return {ok:true,json:async()=>({configured:true})};
+    sent.push(JSON.parse(options.body));
+    assert.equal(options.headers.Authorization,'Bearer session-token');
+    return {ok:true,json:async()=>({message:'Sugiro esta tarefa.',actions:[{type:'create',title:'Estudar',date:''}]})};
+  };
+  app.$('#assistant-open').click();
+  app.$('#assistant-mode').value='online';
+  app.$('#assistant-mode').dispatchEvent(new app.w.Event('change'));
+  app.input('#assistant-input','Preciso estudar');
+  app.$('#assistant-form').dispatchEvent(new app.w.Event('submit',{cancelable:true}));
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(app.data().tasks.length,0);
+  app.input('#assistant-input','Pode explicar a proposta?');
+  app.$('#assistant-form').dispatchEvent(new app.w.Event('submit',{cancelable:true}));
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.ok(sent[1].history.some(message=>message.content.includes('Proposta (pending)')));
+  app.w.document.dispatchEvent(new app.w.Event('clareza:workspace-locked'));
+  assert.equal(app.$('#assistant-messages').textContent,'');
+  assert.equal(app.$('#assistant-dialog').open,false);
+});
+
+test('parar resposta cancela requisição sem criar tarefas', async t => {
+  const app=boot(t);
+  app.w.ClarezaAccount={accessToken:async()=> 'session-token'};
+  app.w.fetch=async(url,options)=>{
+    if(!options)return {ok:true,json:async()=>({configured:true})};
+    return new Promise((resolve,reject)=>options.signal.addEventListener('abort',()=>reject(new app.w.DOMException('Aborted','AbortError'))));
+  };
+  app.$('#assistant-open').click();
+  app.$('#assistant-mode').value='online';
+  app.$('#assistant-mode').dispatchEvent(new app.w.Event('change'));
+  app.input('#assistant-input','Organize meu dia');
+  app.$('#assistant-form').dispatchEvent(new app.w.Event('submit',{cancelable:true}));
+  await new Promise(resolve=>setImmediate(resolve));
+  app.$('#assistant-stop').click();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.match(app.$('#assistant-messages').textContent,/Resposta interrompida/);
+  assert.equal(app.$('#assistant-send').disabled,false);
+  assert.equal(app.data().tasks.length,0);
+});
 function boot(t,{tasks=[],areas=[],projects=[],pages=[],mobile=false,storageBlocked=false}={}){
   const errors=[],console=new VirtualConsole();console.on('jsdomError',error=>errors.push(error));
   const dom=new JSDOM(fs.readFileSync('dist/index.html','utf8'),{url:'https://clareza.example/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:console});
@@ -86,9 +132,9 @@ test('menu móvel ignora campos desabilitados e fora da ordem de tabulação',t=
   // JSDOM has no layout; visible candidates receive a synthetic rectangle.
   sidebar.querySelectorAll('a,button,input').forEach(el=>{el.getClientRects=()=>[{}];});
   app.$('#mobile-menu').click();
-  app.$('#settings-open').focus();
+  app.$('#account-open').focus();
   const tab=new app.w.KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true});
-  app.$('#settings-open').dispatchEvent(tab);
+  app.$('#account-open').dispatchEvent(tab);
   assert.equal(tab.defaultPrevented,true);
   assert.equal(app.w.document.activeElement,app.$('#sidebar .brand'));
   app.w.document.dispatchEvent(new app.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
