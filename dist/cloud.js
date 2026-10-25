@@ -223,8 +223,8 @@
   document.addEventListener('click',async event=>{
     const button=event.target.closest('[data-account-action]');if(!button||busy||!account)return;
     const action=button.dataset.accountAction;
-    if(action==='export'){download(state,'clareza-conta-'+D.dateKey()+'.json');return;}
-    if(action==='backup'){try{const stored=JSON.parse(localStorage.getItem(latestBackup));download(stored.data,'clareza-copia-anterior-'+D.dateKey()+'.json');}catch{message('Não foi possível abrir a cópia anterior.',true);}return;}
+    if(action==='export'){download(state,'clarity-ai-conta-'+D.dateKey()+'.json');return;}
+    if(action==='backup'){try{const stored=JSON.parse(localStorage.getItem(latestBackup));download(stored.data,'clarity-ai-copia-anterior-'+D.dateKey()+'.json');}catch{message('Não foi possível abrir a cópia anterior.',true);}return;}
     if(action==='reconnect'){reconnecting=true;setAuthMode('signin');$('#account-email-input').value=account.email||'';update();return;}
     if(action==='sync'){if(dirty)await flush();else{dialog.close();await refresh();}return;}
     if(action==='import'){

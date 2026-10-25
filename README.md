@@ -1,4 +1,4 @@
-# clareza.ai
+# clarity.ai
 
 Um espaço pessoal para tarefas, projetos, áreas da vida e páginas de notas. A interface oferece temas claro, escuro e sistema, captura rápida, visão semanal e um assistente que prepara propostas antes de alterar tarefas.
 

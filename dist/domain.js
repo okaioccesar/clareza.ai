@@ -4,7 +4,7 @@
     const validDate = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && dateKey(new Date(s + 'T12:00:00')) === s;
     const text = (s, n) => typeof s === 'string' ? s.slice(0, n) : '', array = a => Array.isArray(a) ? a : [], unique = a => [...new Map(a.map(x => [x.id, x])).values()];
     function normalize(raw) {
-        if (!raw || typeof raw !== 'object' || !Array.isArray(raw.tasks)) throw new Error('Escolha uma exportação válida do clareza.ai.');
+        if (!raw || typeof raw !== 'object' || !Array.isArray(raw.tasks)) throw new Error('Escolha uma exportação válida do clarity.ai.');
         const colors = ['blue', 'green', 'orange', 'rose', 'purple'];
         const areas = unique(array(raw.areas).filter(a => a && typeof a.id === 'string' && typeof a.title === 'string').map(a => ({ id: a.id, title: text(a.title, 200), description: text(a.description, 2000), color: colors.includes(a.color) ? a.color : 'blue' })));
         const areaId = s => areas.some(a => a.id === s) ? s : '';

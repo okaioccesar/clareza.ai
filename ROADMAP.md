@@ -1,4 +1,4 @@
-# Próximos passos do clareza.ai
+# Próximos passos do clarity.ai
 
 Propostas para priorização. Estas funcionalidades ainda não foram implementadas.
 O foco continua sendo organizar tarefas sem acrescentar mais uma tela para cada ideia.
