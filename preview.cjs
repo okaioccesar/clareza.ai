@@ -1,6 +1,6 @@
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'dist');
-const routes={'/api/config':'./api/config.ts','/api/workspace':'./api/workspace.ts','/api/chat':'./api/chat.js'};
+const routes={'/api/config':'./api/config.ts','/api/workspace':'./api/workspace.ts','/api/chat':'./api/chat.js','/api/whatsapp':'./api/whatsapp.ts'};
 function createServer(){
   return http.createServer(async(req,res)=>{
     try{
@@ -10,6 +10,13 @@ function createServer(){
         for await(const chunk of req){size+=chunk.length;if(size>2*1024*1024+65536){res.writeHead(413,{'Content-Type':'application/json'});return res.end(JSON.stringify({error:'O espaço excede o limite de envio.'}))}chunks.push(chunk)}
         if(chunks.length)req.body=Buffer.concat(chunks).toString('utf8');
         const handler=(await import(routes[name])).default;
+        if(typeof handler.fetch==='function'){
+          const method=req.method||'GET';
+          const request=new Request(new URL(req.url,'http://localhost'),{method,headers:req.headers,body:['GET','HEAD'].includes(method)?undefined:Buffer.concat(chunks)});
+          const response=await handler.fetch(request);
+          res.writeHead(response.status,Object.fromEntries(response.headers));
+          return res.end(Buffer.from(await response.arrayBuffer()));
+        }
         return await handler(req,res);
       }
       const file=path.resolve(root,'.'+(name==='/'?'/index.html':name));
