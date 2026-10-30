@@ -79,3 +79,4 @@ commandResults = function () { originalCommandResults(); const q = $('#command-i
 // Event properties are rebound so search also sees areas.
 $('#command-input').oninput = commandResults;
 readRoute();
+ 
