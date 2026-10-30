@@ -26,7 +26,7 @@ A prévia abre em `http://127.0.0.1:4187` e atende os arquivos e as APIs. Ela ca
 - `dist/shell.js`: navegação responsiva e preferência da barra lateral.
 - `dist/theme.js`: preferência de aparência, sincronização entre abas e controles de sol/lua.
 - `dist/workspace.css`: superfícies, tipografia, layouts e movimento da interface.
-- `api/chat.js`: conexão do servidor com o AI Gateway.
+- `api/chat.js`: conexão do servidor com o OpenAI.
 - `api/config.ts`, `api/workspace.ts` e `server/`: API TypeScript, autenticação e validação do espaço.
 - `dist/cloud.js` e `dist/sync-core.js`: contas, cópia offline, importação explícita e resolução de conflitos.
 - `supabase/`: migração PostgreSQL, políticas de acesso e teste real de isolamento.

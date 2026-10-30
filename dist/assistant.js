@@ -113,7 +113,7 @@
   $('#assistant-form').onsubmit = e => { e.preventDefault(); submit($('#assistant-input').value); };
   $('#assistant-input').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); submit(e.currentTarget.value); } };
   document.querySelectorAll('[data-chat-prompt]').forEach(button => button.onclick = () => submit(button.dataset.chatPrompt));
-  $('#assistant-mode').onchange = e => { mode = e.target.value; $('#assistant-mode-help').textContent = mode === 'local' ? 'Comandos locais: organiza tarefas neste navegador, sem enviar dados para uma IA.' : 'Ao enviar, sua mensagem, títulos, prazos, prioridades e a conversa atual são enviados à IA pelo Vercel AI Gateway. Notas e páginas não são enviadas. Requer IA configurada no servidor.'; };
+  $('#assistant-mode').onchange = e => { mode = e.target.value; $('#assistant-mode-help').textContent = mode === 'local' ? 'Comandos locais: organiza tarefas neste navegador, sem enviar dados para uma IA.' : 'Ao enviar, sua mensagem, títulos, prazos, prioridades e a conversa atual são enviados à IA pelo OpenAI. Notas e páginas não são enviadas. Requer IA configurada no servidor.'; };
   $('#assistant-clear').onclick = () => { if (busy) return; messages.splice(0); log.replaceChildren(); welcome(); };
   $('#assistant-stop').onclick = () => { cancelled = true; request?.abort(); };
   document.addEventListener('clareza:workspace-locked', () => {

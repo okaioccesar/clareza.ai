@@ -1,6 +1,6 @@
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'dist');
-const routes={'/api/config':'./api/config.ts','/api/workspace':'./api/workspace.ts','/api/chat':'./api/chat.js','/api/whatsapp':'./api/whatsapp.ts'};
+const routes={'/api/config':'./api/config.ts','/api/workspace':'./api/workspace.ts','/api/chat':'./api/chat.js'};
 function createServer(){
   return http.createServer(async(req,res)=>{
     try{
