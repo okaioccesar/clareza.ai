@@ -148,9 +148,9 @@ test('menu móvel ignora campos desabilitados e fora da ordem de tabulação',t=
   // JSDOM has no layout; visible candidates receive a synthetic rectangle.
   sidebar.querySelectorAll('a,button,input').forEach(el=>{el.getClientRects=()=>[{}];});
   app.$('#mobile-menu').click();
-  app.$('#account-open').focus();
+  app.$('#profile-open').focus();
   const tab=new app.w.KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true});
-  app.$('#account-open').dispatchEvent(tab);
+  app.$('#profile-open').dispatchEvent(tab);
   assert.equal(tab.defaultPrevented,true);
   assert.equal(app.w.document.activeElement,app.$('#sidebar .brand'));
   app.w.document.dispatchEvent(new app.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
