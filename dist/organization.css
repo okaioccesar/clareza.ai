@@ -50,7 +50,7 @@
     gap: 8px;
     padding: 14px 1px;
     color: #899180;
-    font-size: 12px;
+    font-size:14px;
     border-bottom: 2px solid transparent;
     margin-bottom: -1px
 }
@@ -61,7 +61,7 @@
 }
 
 .space-tabs>button>span {
-    font-size: 9px;
+    font-size:14px;
     color: #99a18d;
     background: #f0f2eb;
     padding: 3px 6px;
@@ -134,7 +134,7 @@
 }
 
 .area-card p {
-    font-size: 11px;
+    font-size:14px;
     line-height: 1.8;
     color: #8c9680;
     margin: 12px 0 24px;
@@ -142,7 +142,7 @@
 }
 
 .area-counts {
-    font-size: 9px;
+    font-size:14px;
     display: flex;
     gap: 15px;
     color: #99a58b;
@@ -167,7 +167,7 @@
 
 .area-onboarding p {
     color: #869477;
-    font-size: 12px;
+    font-size:14px;
     line-height: 1.8
 }
 
@@ -181,12 +181,12 @@
 }
 
 .area-suggestions .button {
-    font-size: 12px;
+    font-size:14px;
     padding: 12px 18px
 }
 
 .project-area {
-    font-size: 9px;
+    font-size:14px;
     color: #839571;
     margin-bottom: 9px
 }
@@ -195,7 +195,7 @@
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    font-size: 9px;
+    font-size:14px;
     white-space: nowrap;
     color: #8e9f7b
 }
@@ -219,7 +219,7 @@
 .task-details>summary {
     cursor: pointer;
     color: #71895f;
-    font-size: 12px;
+    font-size:14px;
     padding: 5px 0;
     list-style-position: inside
 }
@@ -230,12 +230,12 @@
 }
 
 .task-details .muted {
-    font-size: 10px;
+    font-size:14px;
     line-height: 1.8
 }
 
 .subtask-heading {
-    font-size: 11px;
+    font-size:14px;
     color: #7b9266;
     margin: 24px 0 12px
 }
@@ -252,7 +252,7 @@
     min-width: 0;
     flex: 1;
     padding: 8px 10px;
-    font-size: 12px
+    font-size:14px
 }
 
 .subtask-editor-row input[type=checkbox] {
@@ -270,12 +270,12 @@
     margin: 0;
     min-width: 0;
     flex: 1;
-    font-size: 12px
+    font-size:14px
 }
 
 .subtask-add>.button {
     padding: 10px 12px;
-    font-size: 10px
+    font-size:14px
 }
 
 .subtask-add svg {
@@ -328,7 +328,7 @@
     }
 
     .area-counts {
-        font-size: 10px
+        font-size:14px
     }
 
     .area-onboarding {
@@ -344,7 +344,7 @@
     }
 
     .space-tabs>button {
-        font-size: 13px
+        font-size:14px
     }
 
     .task-details>summary {
@@ -357,7 +357,7 @@
     }
 
     .task-row .subtask-count {
-        font-size: 10px
+        font-size:14px
     }
 
     .area-suggestions {
@@ -369,7 +369,7 @@
     }
 
     .subtask-add>.button {
-        font-size: 11px
+        font-size:14px
     }
 
     .subtask-editor-row input[type=checkbox] {
@@ -378,7 +378,7 @@
     }
 
     .task-details .muted {
-        font-size: 11px
+        font-size:14px
     }
 }
 

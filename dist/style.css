@@ -116,7 +116,7 @@ kbd {
 }
 
 .brand-dot {
-    font-size: 10px;
+    font-size:14px;
     font-weight: 400;
     align-self: flex-start;
     margin-top: 6px;
@@ -155,7 +155,7 @@ kbd {
     border: 1px solid #dfdfd5;
     border-radius: 6px;
     padding: 9px;
-    font-size: 11px;
+    font-size:14px;
     color: #777d70;
     margin-bottom: 27px;
     text-align: left
@@ -167,11 +167,11 @@ kbd {
 
 .search-trigger kbd {
     margin-left: auto;
-    font-size: 9px
+    font-size:14px
 }
 
 .nav-label {
-    font-size: 9px;
+    font-size:14px;
     letter-spacing: 1.5px;
     color: #92958b;
     font-weight: 550;
@@ -202,7 +202,7 @@ kbd {
     border-radius: 6px;
     padding: 10px 12px;
     width: 100%;
-    font-size: 12px;
+    font-size:14px;
     text-align: left;
     color: #767a71;
     min-width: 0
@@ -227,7 +227,7 @@ kbd {
 
 .nav-count {
     margin-left: auto;
-    font-size: 10px;
+    font-size:14px;
     color: #a1a59c
 }
 
@@ -236,12 +236,12 @@ kbd {
 }
 
 .nav-item.sub {
-    font-size: 11px;
+    font-size:14px;
     padding: 8px 12px
 }
 
 .nav-empty {
-    font-size: 10px;
+    font-size:14px;
     color: #a0a399;
     padding: 8px 12px;
     display: block;
@@ -260,12 +260,12 @@ kbd {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 11px
+    font-size:14px
 }
 
 .profile small {
     display: block;
-    font-size: 9px;
+    font-size:14px;
     color: #999c92;
     margin-top: 4px
 }
@@ -277,7 +277,7 @@ kbd {
     border-radius: 50%;
     display: grid;
     place-items: center;
-    font-size: 9px;
+    font-size:14px;
     color: #686e61
 }
 
@@ -300,7 +300,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 11px
+    font-size:14px
 }
 
 .breadcrumb {
@@ -331,7 +331,7 @@ header {
 }
 
 #save-status {
-    font-size: 10px;
+    font-size:14px;
     color: #93998a
 }
 
@@ -362,7 +362,7 @@ header {
 }
 
 .overline {
-    font-size: 9px;
+    font-size:14px;
     letter-spacing: 1.4px;
     text-transform: uppercase;
     font-weight: 550;
@@ -388,7 +388,7 @@ h1 {
 }
 
 .lead {
-    font-size: 12px;
+    font-size:14px;
     line-height: 1.9;
     color: #8b8f82;
     margin: 0
@@ -407,7 +407,7 @@ h1 {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-size: 11px;
+    font-size:14px;
     font-weight: 500;
     white-space: nowrap
 }
@@ -433,7 +433,7 @@ h1 {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 10px;
+    font-size:14px;
     color: #8b9381;
     padding: 6px 0
 }
@@ -476,7 +476,7 @@ h1 {
 
 .art-caption,
 .art-foot {
-    font-size: 8px;
+    font-size:14px;
     color: #989d8c;
     letter-spacing: 1.5px;
     text-align: center;
@@ -492,7 +492,7 @@ h1 {
     letter-spacing: .4px;
     font-family: 'Instrument Serif';
     font-style: italic;
-    font-size: 13px
+    font-size:14px
 }
 
 .orb {
@@ -559,7 +559,7 @@ h1 {
 }
 
 .week-ribbon button span {
-    font-size: 9px;
+    font-size:14px;
     text-transform: uppercase
 }
 
@@ -583,12 +583,12 @@ h1 {
     margin-left: auto;
     align-self: center;
     text-align: right;
-    font-size: 10px
+    font-size:14px
 }
 
 .week-summary>span {
     display: block;
-    font-size: 8px;
+    font-size:14px;
     letter-spacing: 1.5px;
     color: #959a8b;
     margin-bottom: 8px
@@ -635,7 +635,7 @@ h2 {
 }
 
 .count {
-    font-size: 10px;
+    font-size:14px;
     color: #929b86;
     font-weight: 400;
     margin-left: 8px
@@ -652,7 +652,7 @@ h2 {
     min-height: 63px;
     border-bottom: 1px solid var(--line);
     padding: 10px 0;
-    font-size: 11px
+    font-size:14px
 }
 
 .task-row input {
@@ -676,7 +676,7 @@ h2 {
 .task-row input:checked:after {
     content: '✓';
     color: #fff;
-    font-size: 10px;
+    font-size:14px;
     position: absolute;
     inset: 0;
     text-align: center
@@ -689,7 +689,7 @@ h2 {
     padding: 3px 0;
     line-height: 1.7;
     overflow-wrap: anywhere;
-    font-size: 12px
+    font-size:14px
 }
 
 .task-row.done .task-name {
@@ -718,7 +718,7 @@ h2 {
     align-items: center;
     gap: 6px;
     color: #8b9580;
-    font-size: 9px;
+    font-size:14px;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -753,7 +753,7 @@ h2 {
 .task-date {
     width: 62px;
     text-align: right;
-    font-size: 9px;
+    font-size:14px;
     color: #969f88;
     white-space: nowrap
 }
@@ -765,7 +765,7 @@ h2 {
 .priority-mark {
     color: #b8c0aa;
     width: 10px;
-    font-size: 13px
+    font-size:14px
 }
 
 .priority-mark.high {
@@ -845,7 +845,7 @@ h2 {
 }
 
 .project-description {
-    font-size: 11px;
+    font-size:14px;
     line-height: 1.7;
     color: #949c8a;
     margin-bottom: 22px;
@@ -856,7 +856,7 @@ h2 {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    font-size: 9px;
+    font-size:14px;
     color: #929e81;
     margin-top: auto
 }
@@ -906,12 +906,12 @@ h2 {
 }
 
 .project-new>span {
-    font-size: 12px;
+    font-size:14px;
     color: #7c876c
 }
 
 .project-new small {
-    font-size: 10px;
+    font-size:14px;
     line-height: 1.8
 }
 
@@ -929,7 +929,7 @@ h2 {
 
 .daily-note h2,
 .quick-note h2 {
-    font-size: 12px
+    font-size:14px
 }
 
 .daily-note .section-heading svg {
@@ -939,7 +939,7 @@ h2 {
 
 .daily-note p,
 .quick-note p {
-    font-size: 10px;
+    font-size:14px;
     color: #a29b7a;
     line-height: 1.8;
     margin: 0 0 12px
@@ -963,18 +963,18 @@ h2 {
 }
 
 .small {
-    font-size: 10px;
+    font-size:14px;
     line-height: 1.8
 }
 
 .muted {
     color: #87907b;
-    font-size: 12px;
+    font-size:14px;
     line-height: 1.8
 }
 
 .daily-note .small {
-    font-size: 8px;
+    font-size:14px;
     color: #b0a788
 }
 
@@ -993,7 +993,7 @@ h2 {
 
 .quick-note textarea {
     font-family: 'DM Sans';
-    font-size: 11px;
+    font-size:14px;
     color: #808c70;
     min-height: 85px
 }
@@ -1010,7 +1010,7 @@ h2 {
 }
 
 .scratch-actions .text-button {
-    font-size: 9px
+    font-size:14px
 }
 
 .notebook-link {
@@ -1019,7 +1019,7 @@ h2 {
     gap: 12px;
     text-align: left;
     padding: 0 5px;
-    font-size: 12px
+    font-size:14px
 }
 
 .notebook-link>svg:first-child {
@@ -1034,7 +1034,7 @@ h2 {
 
 .notebook-link small {
     display: block;
-    font-size: 9px;
+    font-size:14px;
     color: #a1ab91;
     margin-top: 6px
 }
@@ -1058,7 +1058,7 @@ h2 {
 }
 
 .empty p {
-    font-size: 11px;
+    font-size:14px;
     color: #9ba78e;
     line-height: 1.9;
     margin: 0 0 18px
@@ -1084,7 +1084,7 @@ h2 {
 }
 
 .segmented button {
-    font-size: 10px;
+    font-size:14px;
     color: #98a389;
     padding: 7px 10px;
     border-radius: 4px;
@@ -1113,7 +1113,7 @@ h2 {
 .filters select {
     border: 0;
     background: transparent;
-    font-size: 10px;
+    font-size:14px;
     color: #899778;
     max-width: 150px
 }
@@ -1130,7 +1130,7 @@ h2 {
 }
 
 .inline-search input {
-    font-size: 10px;
+    font-size:14px;
     border: 0;
     background: none;
     width: 135px;
@@ -1159,13 +1159,13 @@ h2 {
 }
 
 .column-heading h3 {
-    font-size: 11px;
+    font-size:14px;
     font-weight: 500;
     margin: 0
 }
 
 .column-heading>span {
-    font-size: 9px;
+    font-size:14px;
     color: #a4b093
 }
 
@@ -1208,7 +1208,7 @@ h2 {
 }
 
 .kanban-title {
-    font-size: 12px;
+    font-size:14px;
     text-align: left;
     font-weight: 500;
     line-height: 1.7;
@@ -1216,7 +1216,7 @@ h2 {
 }
 
 .kanban-card p {
-    font-size: 10px;
+    font-size:14px;
     color: #9ea78f;
     line-height: 1.8
 }
@@ -1225,7 +1225,7 @@ h2 {
     display: flex;
     justify-content: space-between;
     margin-top: 17px;
-    font-size: 9px;
+    font-size:14px;
     color: #a0ad8e
 }
 
@@ -1250,12 +1250,12 @@ h2 {
     padding: 9px 0 0;
     margin-top: 14px;
     color: #8c9a78;
-    font-size: 9px;
+    font-size:14px;
     background: transparent
 }
 
 .column-empty {
-    font-size: 10px;
+    font-size:14px;
     color: #adb69f;
     line-height: 1.8
 }
@@ -1269,7 +1269,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 11px;
+    font-size:14px;
     color: #97a58a;
     padding: 0 0 27px
 }
@@ -1293,7 +1293,7 @@ h2 {
 }
 
 .week-controls strong {
-    font-size: 12px;
+    font-size:14px;
     font-weight: 500;
     color: #7b8a68
 }
@@ -1333,7 +1333,7 @@ h2 {
 }
 
 .day-heading span {
-    font-size: 9px;
+    font-size:14px;
     text-transform: uppercase;
     color: #a2ae91
 }
@@ -1344,7 +1344,7 @@ h2 {
 }
 
 .day-add {
-    font-size: 9px;
+    font-size:14px;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -1370,7 +1370,7 @@ h2 {
 }
 
 .week-task>button {
-    font-size: 10px;
+    font-size:14px;
     padding: 0;
     text-align: left;
     line-height: 1.8;
@@ -1383,7 +1383,7 @@ h2 {
 }
 
 .week-task .small {
-    font-size: 8px
+    font-size:14px
 }
 
 .unscheduled {
@@ -1437,7 +1437,7 @@ h2 {
 
 .page-card p {
     color: #9ca98c;
-    font-size: 11px;
+    font-size:14px;
     line-height: 1.9;
     overflow-wrap: anywhere
 }
@@ -1446,7 +1446,7 @@ h2 {
     display: flex;
     justify-content: space-between;
     gap: 8px;
-    font-size: 9px;
+    font-size:14px;
     color: #acb699;
     margin-top: auto
 }
@@ -1485,14 +1485,14 @@ h2 {
 
 .page-template-banner strong {
     display: block;
-    font-size: 12px;
+    font-size:14px;
     font-weight: 500;
     color: #80855b
 }
 
 .page-template-banner small {
     display: block;
-    font-size: 10px;
+    font-size:14px;
     color: #aaad8c;
     margin-top: 5px
 }
@@ -1537,7 +1537,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 10px;
+    font-size:14px;
     color: #a7b495;
     margin-bottom: 40px
 }
@@ -1630,7 +1630,7 @@ h2 {
     border-top: 1px solid var(--line);
     margin-top: 32px;
     padding-top: 18px;
-    font-size: 10px;
+    font-size:14px;
     color: #a2b18e
 }
 
@@ -1646,7 +1646,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 7px;
-    font-size: 10px;
+    font-size:14px;
     color: #8e9e78
 }
 
@@ -1655,7 +1655,7 @@ h2 {
 }
 
 .document-help {
-    font-size: 9px;
+    font-size:14px;
     color: #adba9a;
     line-height: 1.8;
     margin-top: 19px
@@ -1697,7 +1697,7 @@ dialog h2 {
 form label {
     display: block;
     margin: 17px 0;
-    font-size: 11px;
+    font-size:14px;
     color: #83936e
 }
 
@@ -1711,7 +1711,7 @@ form textarea {
     border-radius: 6px;
     padding: 11px;
     background: #fff9;
-    font-size: 13px
+    font-size:14px
 }
 
 form input[type=checkbox] {
@@ -1730,7 +1730,7 @@ form input[type=checkbox] {
 
 .optional {
     color: #b2bca4;
-    font-size: 10px;
+    font-size:14px;
     margin-left: 5px
 }
 
@@ -1755,7 +1755,7 @@ form input[type=checkbox] {
 .danger {
     margin-right: auto;
     color: #b87463;
-    font-size: 11px;
+    font-size:14px;
     padding: 9px 0
 }
 
@@ -1784,7 +1784,7 @@ form input[type=checkbox] {
 }
 
 .command-group {
-    font-size: 9px;
+    font-size:14px;
     color: #a8b698;
     letter-spacing: 1.4px;
     padding: 15px 22px 7px
@@ -1804,7 +1804,7 @@ form input[type=checkbox] {
     padding: 13px 17px;
     text-align: left;
     border-radius: 5px;
-    font-size: 12px
+    font-size:14px
 }
 
 #command-results button>span {
@@ -1822,12 +1822,12 @@ form input[type=checkbox] {
 #command-results button svg:last-child {
     margin-left: auto;
     color: #acbca0;
-    font-size: 9px
+    font-size:14px
 }
 
 .command-footer {
     border-top: 1px solid var(--line);
-    font-size: 9px;
+    font-size:14px;
     color: #adbca2;
     padding: 14px 22px
 }
@@ -1837,7 +1837,7 @@ form input[type=checkbox] {
 }
 
 .command-empty {
-    font-size: 12px;
+    font-size:14px;
     color: #9aac89;
     padding: 20px
 }
@@ -1859,7 +1859,7 @@ form input[type=checkbox] {
     transform: translateX(-50%);
     background: #313d27;
     color: #f3f7ec;
-    font-size: 11px;
+    font-size:14px;
     padding: 15px 22px;
     border-radius: 7px;
     box-shadow: 0 4px 20px #222d1618;
@@ -1871,7 +1871,7 @@ form input[type=checkbox] {
 #toast button {
     color: #c3d99f;
     margin-left: 16px;
-    font-size: 11px;
+    font-size:14px;
     font-weight: 550
 }
 
@@ -2014,11 +2014,11 @@ form input[type=checkbox] {
     }
 
     .search-trigger {
-        font-size: 10px
+        font-size:14px
     }
 
     .search-trigger kbd {
-        font-size: 8px
+        font-size:14px
     }
 
     .view {
@@ -2077,7 +2077,7 @@ form input[type=checkbox] {
     }
 
     .week-summary strong {
-        font-size: 9px
+        font-size:14px
     }
 }
 
@@ -2114,12 +2114,12 @@ form input[type=checkbox] {
 
     .breadcrumb {
         margin-right: auto;
-        font-size: 10px;
+        font-size:14px;
         gap: 7px
     }
 
     #save-status {
-        font-size: 8px
+        font-size:14px
     }
 
     .header-end {
@@ -2139,7 +2139,7 @@ form input[type=checkbox] {
     }
 
     .lead {
-        font-size: 11px
+        font-size:14px
     }
 
     .hero-actions {
@@ -2185,7 +2185,7 @@ form input[type=checkbox] {
     }
 
     .daily-note .small {
-        font-size: 10px
+        font-size:14px
     }
 
     .notebook-link {
@@ -2198,7 +2198,7 @@ form input[type=checkbox] {
     }
 
     .task-name {
-        font-size: 12px
+        font-size:14px
     }
 
     .priority-mark,
@@ -2207,7 +2207,7 @@ form input[type=checkbox] {
     }
 
     .task-date {
-        font-size: 9px
+        font-size:14px
     }
 
     .project-grid,
@@ -2221,11 +2221,11 @@ form input[type=checkbox] {
     }
 
     .project-title {
-        font-size: 13px
+        font-size:14px
     }
 
     .project-description {
-        font-size: 10px
+        font-size:14px
     }
 
     .project-new {
@@ -2234,7 +2234,7 @@ form input[type=checkbox] {
     }
 
     .project-new small {
-        font-size: 9px
+        font-size:14px
     }
 
     .page-heading {
@@ -2280,7 +2280,7 @@ form input[type=checkbox] {
     }
 
     .column-heading h3 {
-        font-size: 13px
+        font-size:14px
     }
 
     .kanban-card select {
@@ -2292,7 +2292,7 @@ form input[type=checkbox] {
     }
 
     .week-controls strong {
-        font-size: 10px
+        font-size:14px
     }
 
     .week-controls>div {
@@ -2308,7 +2308,7 @@ form input[type=checkbox] {
     }
 
     .week-task>button {
-        font-size: 12px
+        font-size:14px
     }
 
     .pages-grid {
@@ -2360,12 +2360,12 @@ form input[type=checkbox] {
     }
 
     .block-add button {
-        font-size: 11px;
+        font-size:14px;
         padding: 10px
     }
 
     .document-help {
-        font-size: 10px
+        font-size:14px
     }
 
     form input,
@@ -2449,31 +2449,31 @@ form input[type=checkbox] {
 }
 
 .task-name {
-    font-size: 13px
+    font-size:14px
 }
 
 .nav-item {
-    font-size: 13px
+    font-size:14px
 }
 
 .nav-item.sub {
-    font-size: 12px
+    font-size:14px
 }
 
 .text-button {
-    font-size: 11px
+    font-size:14px
 }
 
 .lead {
-    font-size: 13px
+    font-size:14px
 }
 
 .document-help {
-    font-size: 11px
+    font-size:14px
 }
 
 .document-meta {
-    font-size: 11px
+    font-size:14px
 }
 
 .block-input::placeholder {

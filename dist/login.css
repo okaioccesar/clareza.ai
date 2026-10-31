@@ -102,11 +102,11 @@
   border-top: 1px solid var(--line);
   padding-top: 18px;
   margin-top: 22px;
-  font-size: 12px;
+  font-size:14px;
   color: var(--muted);
 }
 .login-footnote {
-  font-size: 12px;
+  font-size:14px;
   color: var(--muted);
   letter-spacing: 1px;
 }
@@ -149,11 +149,11 @@
   line-height: 1.7;
 }
 .login-access .account-local-hint {
-  font-size: 12px;
+  font-size:14px;
   line-height: 1.6;
 }
 .login-privacy {
-  font-size: 12px;
+  font-size:14px;
   color: var(--muted);
   margin-top: 32px;
 }
