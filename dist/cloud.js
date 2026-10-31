@@ -45,7 +45,8 @@
   function update(){
     updateAccess();
     $('#save-status').textContent=account||connecting?messages[phase]:messages.local;
-    $('#profile-name').textContent=account?.email||'Espaço pessoal';
+    $('#profile-name').textContent=session?.user?.user_metadata?.display_name||session?.user?.user_metadata?.full_name||account?.email||'Espaço pessoal';
+    document.dispatchEvent(new CustomEvent('clareza:profile',{detail:account?session?.user:null}));
     $('#profile-status').textContent=account?messages[phase]:'Salvo neste navegador';
     $('#account-button-label').textContent=account?'Minha conta':'Entrar ou criar conta';
     $('#account-open').title=account?'Minha conta':'Entrar ou criar conta';
@@ -257,7 +258,10 @@
     try{const other=S.parseCache(event.newValue);if(!other.dirty&&other.revision>=revision){state=other.data;revision=other.revision;lastData=JSON.stringify(state);lastCacheRaw=event.newValue;writeId=other.writeId;render();setPhase('clean');}}catch{}
   });
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
-  window.ClarezaAccount={accessToken:async()=>account?(await freshSession()).access_token:null};
+  window.ClarezaAccount={
+    profile:async()=>{if(!account)return null;const result=await client.auth.getUser();if(result.error)throw Error('Não foi possível carregar o perfil.');return result.data.user;},
+    saveProfile:async data=>{await freshSession();const owner=account.id;const result=await client.auth.updateUser({data});if(result.error)throw Error('Não foi possível salvar o perfil. Tente novamente.');if(account?.id!==owner)throw Error('A sessão mudou.');session.user=result.data.user;update();return result.data.user;},
+    accessToken:async()=>account?(await freshSession()).access_token:null};
   async function initialize(){
     try{
       let config;

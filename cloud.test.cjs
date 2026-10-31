@@ -11,7 +11,7 @@ async function boot(t,{guest=empty(),signedIn=false,sessionWait=null,cache=null,
   w.matchMedia=query=>({matches:mobile&&query.includes('max-width'),addEventListener(){}});w.scrollTo=()=>{};w.structuredClone=structuredClone;w.crypto.randomUUID=crypto.randomUUID;
   Object.defineProperty(w.navigator,'onLine',{get:()=>!networkDown});w.HTMLDialogElement.prototype.showModal=function(){this.open=true};w.HTMLDialogElement.prototype.close=function(){this.open=false};
   w.localStorage.setItem(key,JSON.stringify(guest));if(cache)w.localStorage.setItem(key+'.account.'+uid,JSON.stringify(cache));
-  w.ClarezaAuth={createClient:(_url,_key,options)=>{clientOptions=options;return {auth:{onAuthStateChange(fn){listener=fn},getSession:async()=>{if(sessionWait)await sessionWait;return {data:{session:active},error:sessionError}},signInWithOAuth:async options=>{oauthCalls.push(options);return {data:{url:'https://example.supabase.co/auth/v1/authorize'},error:oauthError}},signInWithPassword:async()=>{active=session;listener('SIGNED_IN',active);return {data:{session:active}}},signOut:async()=>{active=null;listener('SIGNED_OUT',null);return {}},signUp:async()=>({data:{session:null}}),resetPasswordForEmail:async()=>({}),updateUser:async()=>({})}}}};
+  w.ClarezaAuth={createClient:(_url,_key,options)=>{clientOptions=options;return {auth:{onAuthStateChange(fn){listener=fn},getSession:async()=>{if(sessionWait)await sessionWait;return {data:{session:active},error:sessionError}},signInWithOAuth:async options=>{oauthCalls.push(options);return {data:{url:'https://example.supabase.co/auth/v1/authorize'},error:oauthError}},signInWithPassword:async()=>{active=session;listener('SIGNED_IN',active);return {data:{session:active}}},signOut:async()=>{active=null;listener('SIGNED_OUT',null);return {}},signUp:async()=>({data:{session:null}}),resetPasswordForEmail:async()=>({}),getUser:async()=>({data:{user:active?.user}}),updateUser:async({data}={})=>{if(data)active={...active,user:{...active.user,user_metadata:{...active.user.user_metadata,...data}}};return {data:{user:active?.user}}}}}}};
   w.fetch=async(url,options={})=>{
     if(url==='/api/config')return {ok:true,json:async()=>({configured:true,url:'https://example.supabase.co',publishableKey:'sb_publishable_test'})};
     if(networkDown)throw Error('Network unavailable');
@@ -25,7 +25,7 @@ async function boot(t,{guest=empty(),signedIn=false,sessionWait=null,cache=null,
     const snapshot=JSON.parse(JSON.stringify(remote));if(holdGet)await holdGet;
     return {ok:true,status:200,json:async()=>({...snapshot,user:session.user})};
   };
-  const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','workspace-core.js','workspace.js','assistant-core.js','assistant.js','sync-core.js','cloud.js'];
+  const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','workspace-core.js','workspace.js','assistant-core.js','assistant.js','sync-core.js','cloud.js','profile.js'];
   for(const file of scripts)vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),dom.getInternalVMContext(),{filename:file});
   t.after(()=>{w.close();assert.deepEqual(errors,[])});await tick();
   return {w,$,remote,writes,oauthCalls,clientOptions,network(value){networkDown=value},auth(event,next){active=next;listener(event,next)},setSession(next){active=next},hold(method){let release;const promise=new Promise(resolve=>release=resolve);if(method==='GET')holdGet=promise;else holdPut=promise;return ()=>{if(method==='GET')holdGet=null;else holdPut=null;release()}},data:()=>JSON.parse(w.eval('JSON.stringify(state)')),async login(){$('#account-open').click();$('#account-email-input').value='owner@test.invalid';$('#account-password').value='test-password';$('#account-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();},add(title){$('#quick-task-title').value=title;$('#quick-task-title').dispatchEvent(new w.Event('input',{bubbles:true}));$('#quick-task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));},async sync(){$('[data-account-action="sync"]').click();await tick();}};
@@ -184,4 +184,16 @@ test('atualização remota em voo não fecha nem substitui edição do modal',as
   app.remote.revision++;release();await tick();
   assert.equal(app.$('#entity-dialog').open,true);
   assert.equal(app.$('#entity-form [name="title"]').value,'Rascunho ainda não salvo');
+});
+
+
+test('perfil salva nome e descrição na conta e atualiza a barra lateral',async t=>{
+ const app=await boot(t,{signedIn:true});app.$('#profile-open').click();await tick();
+ app.$('#profile-display-name').value='Kaio';app.$('#profile-bio').value='Empreendedor';
+ app.$('#profile-form').dispatchEvent(new app.w.Event('submit',{cancelable:true}));await tick();
+ assert.equal(app.$('#profile-name').textContent,'Kaio');assert.match(app.$('#profile-message').textContent,/salvo/);
+ app.$('#profile-dialog').close();app.$('#profile-open').click();await tick();
+ assert.equal(app.$('#profile-bio').value,'Empreendedor');
+ app.$('#profile-photo').value='javascript:alert(1)';app.$('#profile-form').dispatchEvent(new app.w.Event('submit',{cancelable:true}));await tick();
+ assert.match(app.$('#profile-message').textContent,/HTTPS/);
 });
