@@ -1,7 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require('node:crypto'),vm=require('node:vm');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const D=require('./dist/domain.js');
-const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','workspace-core.js','workspace.js','assistant-core.js','assistant.js','filters.js'];
+const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','workspace-core.js','workspace.js','assistant-core.js','assistant.js','filters.js','calendar.js'];
 
 test('seletor de projetos filtra tarefas e permite fechar com Escape',async t=>{
   const app=boot(t,{projects:[{id:'a',title:'Projeto <longo> com nome completo'},{id:'b',title:'Outro'}],tasks:[{id:'one',title:'Tarefa A',projectId:'a'},{id:'two',title:'Tarefa B',projectId:'b'}]});
@@ -181,4 +181,18 @@ test('prazo do modal respeita contexto e permite retirar a data explicitamente',
   const date=app.$('#entity-form [name="date"]');assert.equal(date.value,'2026-11-10');
   date.nextElementSibling.click();assert.equal(date.value,'');
   app.w.eval("route={view:'today'};openEntity('task')");assert.equal(app.$('#entity-form [name="date"]').value,D.dateKey());
+});
+
+
+test('modal usa seletores temáticos e calendário grava e remove prazo',async t=>{
+  const app=boot(t);app.w.eval("openEntity('task')");
+  await new Promise(resolve=>setImmediate(resolve));
+  const select=app.$('#entity-form [name="priority"]');assert.equal(select.hidden,true);
+  select.closest('details').querySelector('[data-value="high"]').click();assert.equal(select.value,'high');
+  const input=app.$('#entity-form [name="date"]'),picker=input.closest('details');assert.equal(input.hidden,true);
+  picker.open=true;await new Promise(resolve=>setTimeout(resolve,10));
+  picker.querySelector('[data-date]').click();assert.match(input.value,/^\d{4}-\d{2}-\d{2}$/);
+  picker.open=true;await new Promise(resolve=>setTimeout(resolve,10));
+  picker.querySelector('[aria-label="Remover prazo"]').click();assert.equal(input.value,'');
+  assert.equal(app.$('#entity-dialog').open,true);
 });

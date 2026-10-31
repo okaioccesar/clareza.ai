@@ -476,3 +476,20 @@ body[data-input="pointer"] :is(.button,.icon-button,.nav-item,.segmented button)
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
 }
+
+/* Shared controls in forms, boards and toolbars. Expand inside dialogs to avoid clipping. */
+.filter-picker select[hidden], .filter-picker input[hidden] { display:none !important; }
+label>.filter-picker, dialog .filter-picker { width:100%; max-width:none; min-width:0; }
+dialog .filter-picker[open]>.filter-options { position:relative; top:auto; right:auto; margin-top:8px; width:100%; min-width:0; max-width:100%; box-sizing:border-box; }
+.filter-picker summary:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.calendar-panel { width:292px; }
+.calendar-heading,.calendar-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.calendar-heading strong { text-transform:capitalize; font-size:13px; color:var(--ink); }
+.calendar-heading button { width:40px; text-align:center; font-size:22px; }
+.calendar-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px; margin:8px 0; }
+.calendar-grid>span { text-align:center; font-size:11px; padding:8px 0; color:var(--muted); }
+.calendar-grid button { text-align:center; padding:6px 0; min-height:36px; }
+.calendar-grid button[aria-current="date"] { color:var(--accent); font-weight:700; }
+.calendar-footer { border-top:1px solid var(--line); padding-top:6px; }
+.calendar-footer button { text-align:center; }
+.capture-date .date-picker { min-width:110px; }
