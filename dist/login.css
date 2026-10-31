@@ -205,3 +205,8 @@
   .login-brand { font-size: 24px; gap: 7px; }
   .login-brand .brand-mark { width: 28px; height: 28px; }
 }
+
+.session-loading { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: var(--paper); color: var(--ink); }
+.session-loading[hidden], .login-landing[hidden] { display: none; }
+.session-loading strong { font-size: 26px; letter-spacing: -.04em; }
+.session-loading p { color: var(--muted); margin: 0; }

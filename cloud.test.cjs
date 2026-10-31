@@ -3,7 +3,7 @@ const {JSDOM,VirtualConsole}=require('jsdom'),D=require('./dist/domain.js');
 const key='clareza.workspace.v3',uid='11111111-1111-4111-8111-111111111111';
 const empty=()=>D.normalize({tasks:[]}),session={access_token:'test-session-token',user:{id:uid,email:'owner@test.invalid'}};
 const tick=()=>new Promise(resolve=>setTimeout(resolve,5));
-async function boot(t,{guest=empty(),signedIn=false,cache=null,offline=false,mobile=false,googleEnabled=true,oauthError=null,sessionError=null,url='https://clareza.example/'}={}){
+async function boot(t,{guest=empty(),signedIn=false,sessionWait=null,cache=null,offline=false,mobile=false,googleEnabled=true,oauthError=null,sessionError=null,url='https://clareza.example/'}={}){
   const errors=[],virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e));
   const dom=new JSDOM(fs.readFileSync('dist/index.html','utf8'),{url,runScripts:'outside-only',pretendToBeVisual:true,virtualConsole});
   const w=dom.window,$=selector=>w.document.querySelector(selector);let active=signedIn?session:null,listener,networkDown=offline;
@@ -11,7 +11,7 @@ async function boot(t,{guest=empty(),signedIn=false,cache=null,offline=false,mob
   w.matchMedia=query=>({matches:mobile&&query.includes('max-width'),addEventListener(){}});w.scrollTo=()=>{};w.structuredClone=structuredClone;w.crypto.randomUUID=crypto.randomUUID;
   Object.defineProperty(w.navigator,'onLine',{get:()=>!networkDown});w.HTMLDialogElement.prototype.showModal=function(){this.open=true};w.HTMLDialogElement.prototype.close=function(){this.open=false};
   w.localStorage.setItem(key,JSON.stringify(guest));if(cache)w.localStorage.setItem(key+'.account.'+uid,JSON.stringify(cache));
-  w.ClarezaAuth={createClient:(_url,_key,options)=>{clientOptions=options;return {auth:{onAuthStateChange(fn){listener=fn},getSession:async()=>({data:{session:active},error:sessionError}),signInWithOAuth:async options=>{oauthCalls.push(options);return {data:{url:'https://example.supabase.co/auth/v1/authorize'},error:oauthError}},signInWithPassword:async()=>{active=session;listener('SIGNED_IN',active);return {data:{session:active}}},signOut:async()=>{active=null;listener('SIGNED_OUT',null);return {}},signUp:async()=>({data:{session:null}}),resetPasswordForEmail:async()=>({}),updateUser:async()=>({})}}}};
+  w.ClarezaAuth={createClient:(_url,_key,options)=>{clientOptions=options;return {auth:{onAuthStateChange(fn){listener=fn},getSession:async()=>{if(sessionWait)await sessionWait;return {data:{session:active},error:sessionError}},signInWithOAuth:async options=>{oauthCalls.push(options);return {data:{url:'https://example.supabase.co/auth/v1/authorize'},error:oauthError}},signInWithPassword:async()=>{active=session;listener('SIGNED_IN',active);return {data:{session:active}}},signOut:async()=>{active=null;listener('SIGNED_OUT',null);return {}},signUp:async()=>({data:{session:null}}),resetPasswordForEmail:async()=>({}),updateUser:async()=>({})}}}};
   w.fetch=async(url,options={})=>{
     if(url==='/api/config')return {ok:true,json:async()=>({configured:true,url:'https://example.supabase.co',publishableKey:'sb_publishable_test'})};
     if(networkDown)throw Error('Network unavailable');
@@ -160,4 +160,28 @@ test('landing fecha menu móvel ao perder a sessão e permite usar o espaço ap�
   assert.equal(app.$('#login-landing').hidden,false);assert.equal(app.w.document.body.classList.contains('mobile-nav-open'),false);
   assert.equal(app.$('#sidebar-backdrop').hidden,true);assert.equal(app.$('#mobile-menu').getAttribute('aria-expanded'),'false');
   await app.login();assert.equal(app.$('#app-shell').hidden,false);assert.equal(app.$('main').inert,false);
+});
+
+
+test('restauração lenta mantém carregamento sem mostrar login e libera a sessão',async t=>{
+  let release;const sessionWait=new Promise(resolve=>release=resolve);
+  const app=await boot(t,{signedIn:true,sessionWait});
+  assert.equal(app.$('#session-loading').hidden,false);
+  assert.equal(app.$('#login-landing').hidden,true);
+  assert.equal(app.$('#app-shell').hidden,true);
+  release();await tick();await tick();
+  assert.equal(app.$('#session-loading').hidden,true);
+  assert.equal(app.$('#login-landing').hidden,true);
+  assert.equal(app.$('#app-shell').hidden,false);
+});
+
+test('atualização remota em voo não fecha nem substitui edição do modal',async t=>{
+  const app=await boot(t,{signedIn:true});app.add('Editar depois');await app.sync();
+  const release=app.hold('GET');
+  app.w.document.dispatchEvent(new app.w.Event('visibilitychange'));await tick();
+  app.w.eval('openEntity("task",state.tasks[0])');
+  app.$('#entity-form [name="title"]').value='Rascunho ainda não salvo';
+  app.remote.revision++;release();await tick();
+  assert.equal(app.$('#entity-dialog').open,true);
+  assert.equal(app.$('#entity-form [name="title"]').value,'Rascunho ainda não salvo');
 });

@@ -1,6 +1,7 @@
 (function(){
   'use strict';
   const S=ClarezaSync,guestSave=save,guestError=loadError,dialog=$('#account-dialog');
+  let initializing=true;
   let client=null,session=null,account=null,available=false,connecting=false,generation=0;
   let revision=0,dirty=false,writeId=D.id(),phase='local',conflict=null,flight=null,timer=null;
   let lastData='',lastCacheRaw='',authMode='signin',busy=false,reconnecting=false,latestBackup='';
@@ -28,8 +29,11 @@
   function updateAccess(){
     const unlocked=!!account&&!!session&&!connecting&&phase!=='expired'&&authMode!=='recovery';
     const wasUnlocked=!shell.hidden;
-    shell.hidden=!unlocked;shell.inert=!unlocked;landing.hidden=unlocked;
+    const loading=initializing||connecting;
+    $('#session-loading').hidden=!loading;
+    shell.hidden=!unlocked||loading;shell.inert=shell.hidden;landing.hidden=unlocked||loading;
     if(wasUnlocked&&!unlocked)document.dispatchEvent(new Event('clareza:workspace-locked'));
+    if(initializing||connecting){if(dialog.open)dialog.close();return;}
     if(unlocked){
       if(dialog.parentNode===authSlot){dialog.close();dialogHome.after(dialog);$('#view').focus();}
     }else{
@@ -270,6 +274,7 @@
       await acceptSession(result.data.session);update();setInterval(refresh,30000);
       if(returnError||(returnCode&&new URL(location.href).searchParams.has('code')))showReturnError();
     }catch{if(returnError||returnCode)showReturnError();else message('Não foi possível conectar as contas. Verifique a conexão e recarregue a página.',true);update();}
+    finally{initializing=false;update();}
   }
   dialog.addEventListener('cancel',event=>{if(!landing.hidden)event.preventDefault();});
   document.addEventListener('keydown',event=>{if(!landing.hidden&&(!authSlot.contains(event.target)||event.ctrlKey||event.metaKey||event.key==='Escape'))event.stopImmediatePropagation();},true);

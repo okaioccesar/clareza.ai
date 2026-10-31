@@ -161,3 +161,24 @@ test('menu móvel ignora campos desabilitados e fora da ordem de tabulação',t=
   assert.equal(app.$('main').inert,false);
   assert.equal(app.w.document.activeElement.id,'mobile-menu');
 });
+
+test('projeto pluraliza contadores e mantém quadro e filtro por projeto', async t=>{
+  const app=boot(t,{projects:[{id:'a',title:'VaiSeguro'},{id:'b',title:'Outro'}],tasks:[{id:'one',title:'Teste',projectId:'a'}]});
+  app.w.location.hash='project/a';app.w.eval('readRoute()');
+  assert.match(app.$('.project-detail-summary').textContent,/1 tarefa em aberto/);
+  app.$('[data-mode="board"]').click();
+  const select=app.$('[data-change="filter-status"]');select.value='done';select.dispatchEvent(new app.w.Event('change',{bubbles:true}));
+  app.w.location.hash='project/b';app.w.eval('readRoute()');assert.equal(app.w.eval('mode'),'list');
+  app.w.location.hash='project/a';app.w.eval("mode='list';statusFilter='open';readRoute()");
+  assert.equal(app.w.eval('mode'),'board');assert.equal(app.w.eval('statusFilter'),'done');
+});
+
+test('prazo do modal respeita contexto e permite retirar a data explicitamente',t=>{
+  const app=boot(t,{projects:[{id:'a',title:'VaiSeguro'}]});
+  app.w.eval("route={view:'project',id:'a'};openEntity('task')");
+  assert.equal(app.$('#entity-form [name="date"]').value,'');
+  app.w.eval("openEntity('task',null,{date:'2026-11-10'})");
+  const date=app.$('#entity-form [name="date"]');assert.equal(date.value,'2026-11-10');
+  date.nextElementSibling.click();assert.equal(date.value,'');
+  app.w.eval("route={view:'today'};openEntity('task')");assert.equal(app.$('#entity-form [name="date"]').value,D.dateKey());
+});
