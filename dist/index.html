@@ -132,9 +132,9 @@
     <div id="toast" role="status" hidden><span></span><button hidden>Desfazer</button></div>
     <dialog id="assistant-dialog" class="assistant-dialog" aria-labelledby="assistant-title">
         <div class="assistant-heading"><div><span class="overline">CLARITY.AI</span><h2 id="assistant-title">Seu assistente pessoal</h2></div><button class="icon-button" data-close aria-label="Fechar assistente"><span data-icon="x"></span></button></div>
-        <div class="assistant-mode-row"><label>Modo<select id="assistant-mode"><option value="local">Comandos locais</option><option value="online">IA online</option></select></label><button class="text-button" id="assistant-clear">Limpar conversa</button></div>
-        <p id="assistant-availability" class="assistant-mode-help" role="status">Comandos locais disponíveis.</p>
-        <p id="assistant-mode-help" class="assistant-mode-help">Comandos locais: organiza tarefas neste navegador, sem enviar dados para uma IA.</p>
+        <div class="assistant-mode-row"><span>Assistente de tarefas</span><button class="text-button" id="assistant-clear">Limpar conversa</button></div>
+        <p id="assistant-availability" class="assistant-mode-help" role="status">Converse com a IA para organizar suas tarefas.</p>
+        <p id="assistant-mode-help" class="assistant-mode-help">Ao enviar, sua mensagem, títulos, prazos, prioridades e a conversa atual são enviados à OpenAI. Notas e páginas não são enviadas.</p>
         <div id="assistant-messages" class="assistant-messages" role="log" aria-label="Conversa com o assistente" aria-live="polite"></div>
         <div class="assistant-suggestions"><button data-chat-prompt="Organize meu dia">Organizar meu dia</button><button data-chat-prompt="Planeje minha semana">Planejar a semana</button><button data-chat-prompt="Resumo das minhas tarefas">Ver resumo</button></div>
         <form id="assistant-form" class="assistant-composer"><label class="sr-only" for="assistant-input">Mensagem para o assistente</label><textarea id="assistant-input" rows="2" maxlength="4000" placeholder="Crie revisar proposta amanhã com prioridade alta"></textarea><div><span>Enter envia · Shift + Enter quebra a linha</span><button type="button" class="text-button" id="assistant-stop" hidden>Parar resposta</button><button type="submit" class="button primary" id="assistant-send">Enviar</button></div></form>

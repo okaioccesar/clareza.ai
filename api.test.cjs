@@ -16,7 +16,7 @@ test('sem credenciais, informa a configuração sem chamar o provedor', async ()
   assert.deepEqual((await call(handler,{method:'GET'})).body,{configured:false});
   const result=await call(handler);
   assert.equal(result.status,503);
-  assert.match(result.body.error,/comandos locais/i);
+  assert.match(result.body.error,/Configure a API/i);
   assert.equal(result.headers['Cache-Control'],'no-store');
 });
 
@@ -64,3 +64,4 @@ test('falhas e respostas inválidas do provedor não expõem detalhes internos',
   const handler=makeHandler({env:{OPENAI_API_KEY:'test'},fetchImpl:async()=>({ok:true,json:async()=>({choices:[{message:{content:'invalid JSON'}}]})})});
   assert.equal((await call(handler)).status,502);
 });
+

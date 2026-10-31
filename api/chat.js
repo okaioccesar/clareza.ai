@@ -13,7 +13,7 @@ function makeHandler({ fetchImpl = globalThis.fetch, env = process.env, now = Da
       if (!['https:','http:'].includes(origin.protocol) || origin.host !== req.headers.host) return json(res,403,{error:'Esta solicitação precisa vir do próprio aplicativo.'});
     }
     if (!String(req.headers['content-type'] || '').includes('application/json')) return json(res,415,{error:'Envie uma mensagem no formato JSON.'});
-    if (!token) return json(res,503,{error:'A conversa com IA ainda não foi ativada. Os comandos locais continuam disponíveis.'});
+    if (!token) return json(res,503,{error:'A conversa com IA ainda não foi ativada. Configure a API para conversar.'});
     let body; try { body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body; if (Buffer.byteLength(JSON.stringify(body || {})) > 120000) return json(res,413,{error:'O contexto excedeu o limite. Reduza a mensagem.'}); } catch { return json(res,400,{error:'Mensagem inválida.'}); }
     if (!body || typeof body.message !== 'string' || !body.message.trim() || body.message.length > 4000) return json(res,400,{error:'Escreva uma mensagem com até 4.000 caracteres.'});
     const authorization = req.headers.authorization || '';
@@ -52,14 +52,14 @@ Retorne SOMENTE JSON válido no formato {"message":"sua resposta", "actions":[]}
       });
       if (!upstream.ok) {
         const status = upstream.status;
-        return json(res,status === 429 ? 429 : 503,{error:status===429?'O limite de uso da IA foi atingido. Tente mais tarde ou use os comandos locais.':status===401||status===403?'Não foi possível autorizar a conexão com a OpenAI. Verifique a configuração do servidor.':'A IA online não está disponível agora. Tente novamente ou use os comandos locais.'});
+        return json(res,status === 429 ? 429 : 503,{error:status===429?'O limite de uso da IA foi atingido. Verifique o saldo e os limites da API ou tente mais tarde.':status===401||status===403?'Não foi possível autorizar a conexão com a OpenAI. Verifique a configuração do servidor.':'A IA online não está disponível agora. Tente novamente em instantes.'});
       }
       const data = await upstream.json(), content = data?.choices?.[0]?.message?.content;
       if (typeof content !== 'string' || content.length > 30000) return json(res,502,{error:'A IA não retornou uma proposta válida. Tente novamente.'});
       let proposal; try { proposal = JSON.parse(content); } catch { return json(res,502,{error:'A IA retornou um formato inválido. Tente novamente.'}); }
       if (typeof proposal.message !== 'string' || !Array.isArray(proposal.actions) || proposal.actions.length > 20) return json(res,502,{error:'A IA não retornou uma proposta válida. Tente novamente.'});
       return json(res,200,{message:proposal.message.slice(0,6000),actions:proposal.actions});
-    } catch (error) { return json(res,error.name==='TimeoutError'||error.name==='AbortError'?504:502,{error:'Não foi possível receber a resposta da IA. Tente novamente ou use os comandos locais.'}); }
+    } catch (error) { return json(res,error.name==='TimeoutError'||error.name==='AbortError'?504:502,{error:'Não foi possível receber a resposta da IA. Tente novamente em instantes.'}); }
   };
 }
 module.exports = makeHandler();

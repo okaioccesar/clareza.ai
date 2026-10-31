@@ -7,7 +7,7 @@ O assistente chama a API da OpenAI diretamente pelo servidor (`api/chat.js`). A 
 1. Criar uma chave de projeto em https://platform.openai.com/api-keys e configurar faturamento/créditos da API. A assinatura do ChatGPT não substitui a configuração da API.
 2. Na Vercel, projeto `clareza` → Settings → Environment Variables, cadastrar `OPENAI_API_KEY` como segredo no ambiente Production.
 3. Opcionalmente definir `OPENAI_MODEL`. O padrão preserva o modelo já usado pelo projeto: `gpt-4.1-mini`. Verificar disponibilidade e datas de descontinuação na documentação antes de uso prolongado.
-4. Fazer um novo deploy. No assistente do site, escolher “IA online”, enviar uma pergunta e conferir a resposta. Uma indicação de configuração significa presença da chave, não validação de saldo ou permissões.
+4. Fazer um novo deploy. No assistente do site, enviar uma pergunta e conferir a resposta. Uma indicação de configuração significa presença da chave, não validação de saldo ou permissões.
 
 ## Comportamento
 
@@ -21,3 +21,5 @@ O assistente chama a API da OpenAI diretamente pelo servidor (`api/chat.js`). A 
 Referências: https://developers.openai.com/api/reference/resources/chat e https://developers.openai.com/api/docs/models/gpt-4.1-mini.
 
 A integração de WhatsApp foi removida. As migrações antigas permanecem como histórico, seguidas da migração de remoção.
+
+O assistente usa exclusivamente a API da OpenAI, sem modo de comandos locais ou fallback offline.

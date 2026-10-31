@@ -34,8 +34,6 @@ test('chat mantém contexto de propostas e limpa a conversa ao perder acesso', a
     return {ok:true,json:async()=>({message:'Sugiro esta tarefa.',actions:[{type:'create',title:'Estudar',date:''}]})};
   };
   app.$('#assistant-open').click();
-  app.$('#assistant-mode').value='online';
-  app.$('#assistant-mode').dispatchEvent(new app.w.Event('change'));
   app.input('#assistant-input','Preciso estudar');
   app.$('#assistant-form').dispatchEvent(new app.w.Event('submit',{cancelable:true}));
   await new Promise(resolve=>setImmediate(resolve));
@@ -57,8 +55,6 @@ test('parar resposta cancela requisição sem criar tarefas', async t => {
     return new Promise((resolve,reject)=>options.signal.addEventListener('abort',()=>reject(new app.w.DOMException('Aborted','AbortError'))));
   };
   app.$('#assistant-open').click();
-  app.$('#assistant-mode').value='online';
-  app.$('#assistant-mode').dispatchEvent(new app.w.Event('change'));
   app.input('#assistant-input','Organize meu dia');
   app.$('#assistant-form').dispatchEvent(new app.w.Event('submit',{cancelable:true}));
   await new Promise(resolve=>setImmediate(resolve));

@@ -1,6 +1,6 @@
 (function () {
   const engine = ClarezaAssistant, messages = [], log = $('#assistant-messages');
-  let busy = false, mode = 'local', request = null, conversation = 0, cancelled = false;
+  let busy = false, request = null, conversation = 0, cancelled = false;
   function scrollEnd() { log.scrollTop = log.scrollHeight; }
   function addMessage(role, text, plan) {
     const message = {id:D.id(),role,text,plan,status:'pending',baseTasks:(plan?.actions||[]).filter(a=>a.type==='update').map(a=>structuredClone(state.tasks.find(t=>t.id===a.id)))}; messages.push(message); renderMessage(message); scrollEnd(); return message;
@@ -8,7 +8,7 @@
   function actionLabel(action) { return [action.type === 'create' ? 'Nova tarefa' : 'Atualizar', action.date !== undefined ? dateLabel(action.date) : '', action.priority === 'high' ? 'Prioridade alta' : '', action.pinned ? 'Fixar em Hoje' : '', action.status === 'done' ? 'Concluir' : '', action.areaId ? area(action.areaId)?.title : ''].filter(Boolean).join(' · '); }
   function renderMessage(message) {
     const element = document.createElement('article'); element.className = 'chat-message ' + message.role; element.dataset.messageId = message.id;
-    const author = document.createElement('span'); author.className = 'chat-author'; author.textContent = message.role === 'user' ? 'Você' : mode === 'online' ? 'Assistente · IA online' : 'Assistente · local'; element.append(author);
+    const author = document.createElement('span'); author.className = 'chat-author'; author.textContent = message.role === 'user' ? 'Você' : 'Assistente · IA'; element.append(author);
     const text = document.createElement('p'); text.textContent = message.text; element.append(text);
     if (message.plan?.actions.length) {
       const proposal = document.createElement('div'); proposal.className = 'chat-plan';
@@ -46,9 +46,8 @@
     busy = value;
     $('#assistant-send').disabled = value;
     $('#assistant-input').disabled = value;
-    $('#assistant-mode').disabled = value;
     $('#assistant-clear').disabled = value;
-    $('#assistant-stop').hidden = !value || mode !== 'online';
+    $('#assistant-stop').hidden = !value;
     $('#assistant-send').textContent = value ? 'Aguarde…' : 'Enviar';
     log.setAttribute('aria-busy',String(value));
   }
@@ -59,10 +58,10 @@
       const data = await response.json();
       if (current !== conversation) return;
       $('#assistant-availability').textContent = response.ok && data.configured
-        ? 'IA configurada. Selecione IA online para conversar.'
-        : 'IA ainda não configurada. Os comandos locais estão disponíveis.';
+        ? 'IA configurada. Envie uma mensagem para conversar.'
+        : 'IA ainda não configurada. Configure a API para conversar.';
     } catch {
-      if (current === conversation) $('#assistant-availability').textContent = 'Sem conexão com a IA. Você pode usar os comandos locais.';
+      if (current === conversation) $('#assistant-availability').textContent = 'Sem conexão com a IA. Verifique sua conexão e tente novamente.';
     }
   }
   function history() {
@@ -80,10 +79,10 @@
     const current = conversation;
     cancelled = false;
     addMessage('user',text); $('#assistant-input').value = ''; setBusy(true);
-    const waiting = document.createElement('div'); waiting.className = 'chat-waiting'; waiting.textContent = mode === 'online' ? 'Preparando a proposta…' : 'Organizando…'; log.append(waiting); scrollEnd();
+    const waiting = document.createElement('div'); waiting.className = 'chat-waiting'; waiting.textContent = 'Preparando a resposta…'; log.append(waiting); scrollEnd();
     try {
       let result;
-      if (mode === 'online') {
+      {
         const controller = new AbortController();
         request = controller;
         const timeout = setTimeout(() => controller.abort(),35000);
@@ -94,14 +93,14 @@
           const response = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+accessToken},signal:controller.signal,body:JSON.stringify({message:text,context:context(),history:history()})});
           const data = await response.json(); if (!response.ok) throw new Error(data.error || 'A IA online não está disponível agora.'); result = engine.validatePlan(data,state);
         } finally { clearTimeout(timeout); if (request === controller) request = null; }
-      } else result = engine.validatePlan(engine.parse(text,state),state);
+      }
       if (current !== conversation) return;
       if (cancelled) { waiting.remove(); addMessage('assistant','Resposta interrompida. Nenhuma tarefa foi alterada.'); return; }
       waiting.remove(); addMessage('assistant',result.message,result);
     } catch (error) {
       if (current !== conversation) return;
       waiting.remove();
-      addMessage('assistant',cancelled ? 'Resposta interrompida. Nenhuma tarefa foi alterada.' : error.name === 'AbortError' ? 'A resposta demorou além do esperado. Tente novamente ou selecione Comandos locais.' : error.message);
+      addMessage('assistant',cancelled ? 'Resposta interrompida. Nenhuma tarefa foi alterada.' : error.name === 'AbortError' ? 'A resposta demorou além do esperado. Tente novamente em instantes.' : error.message);
       if (!cancelled) $('#assistant-input').value = text;
     } finally {
       waiting.remove();
@@ -113,7 +112,6 @@
   $('#assistant-form').onsubmit = e => { e.preventDefault(); submit($('#assistant-input').value); };
   $('#assistant-input').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); submit(e.currentTarget.value); } };
   document.querySelectorAll('[data-chat-prompt]').forEach(button => button.onclick = () => submit(button.dataset.chatPrompt));
-  $('#assistant-mode').onchange = e => { mode = e.target.value; $('#assistant-mode-help').textContent = mode === 'local' ? 'Comandos locais: organiza tarefas neste navegador, sem enviar dados para uma IA.' : 'Ao enviar, sua mensagem, títulos, prazos, prioridades e a conversa atual são enviados à IA pelo OpenAI. Notas e páginas não são enviadas. Requer IA configurada no servidor.'; };
   $('#assistant-clear').onclick = () => { if (busy) return; messages.splice(0); log.replaceChildren(); welcome(); };
   $('#assistant-stop').onclick = () => { cancelled = true; request?.abort(); };
   document.addEventListener('clareza:workspace-locked', () => {
