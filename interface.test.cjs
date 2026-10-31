@@ -1,7 +1,27 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require('node:crypto'),vm=require('node:vm');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const D=require('./dist/domain.js');
-const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','workspace-core.js','workspace.js','assistant-core.js','assistant.js'];
+const scripts=['theme.js','domain.js','app.js','organization.js','shell.js','workspace-core.js','workspace.js','assistant-core.js','assistant.js','filters.js'];
+
+test('seletor de projetos filtra tarefas e permite fechar com Escape',async t=>{
+  const app=boot(t,{projects:[{id:'a',title:'Projeto <longo> com nome completo'},{id:'b',title:'Outro'}],tasks:[{id:'one',title:'Tarefa A',projectId:'a'},{id:'two',title:'Tarefa B',projectId:'b'}]});
+  app.w.eval("route={view:'all'};render()");
+  await new Promise(resolve=>setImmediate(resolve));
+  const select=app.$('[data-change="filter-project"]');
+  assert.equal(select.hidden,true);
+  const picker=select.closest('details');
+  picker.open=true;
+  picker.querySelector('[data-value="a"]').click();
+  assert.equal(select.value,'a');
+  assert.match(app.$('#task-results').textContent,/Tarefa A/);
+  assert.doesNotMatch(app.$('#task-results').textContent,/Tarefa B/);
+  assert.match(picker.querySelector('summary').textContent,/<longo>/);
+  assert.equal(picker.querySelector('longo'),null);
+  picker.open=true;
+  picker.querySelector('button').dispatchEvent(new app.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+  assert.equal(picker.open,false);
+  assert.equal(app.w.document.activeElement,picker.querySelector('summary'));
+});
 
 test('chat mantém contexto de propostas e limpa a conversa ao perder acesso', async t => {
   const app=boot(t);
