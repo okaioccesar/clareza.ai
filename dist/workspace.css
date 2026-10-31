@@ -8,13 +8,19 @@
   --ease-out:cubic-bezier(0.23,1,0.32,1); --ease-drawer:cubic-bezier(0.32,0.72,0,1);
 }
 :root[data-theme="dark"] {
-  --paper:#111722; --sidebar:#171e2b; --ink:#e5ebf6; --muted:#a1b0c8;
+  --paper:#111722; --sidebar:#171e2b; --ink:#f0f4fc; --muted:#bdc9dc;
   --line:#2c374a; --card:#1b2433; --surface:#202b3d; --raised:#263248;
   --accent:#96b0ff; --accent-hover:#b0c3ff; --accent-soft:#293957; --accent-ink:#b0c3ff;
   --accent-text:#122243; --note:#202e47; --note-line:#324260;
   --shadow:0 16px 50px #060b1733;
 }
 body { font-size:14px; line-height:1.55; }
+/* Explicit placeholder colors avoid the browser's low-contrast default. */
+input::placeholder,textarea::placeholder { color:var(--muted); opacity:1; }
+:root[data-theme="dark"] .daily-note textarea::placeholder,
+:root[data-theme="dark"] .quick-note textarea::placeholder,
+:root[data-theme="dark"] .block-input::placeholder { color:var(--muted); opacity:1; }
+:root[data-theme="dark"] .day-filters button span { opacity:1; }
 .assistant-heading h2 { font:600 23px/1.3 'DM Sans',sans-serif; letter-spacing:-.6px; }
 #assistant-availability { margin-bottom:0; color:var(--accent-ink); }
 .chat-message.user { border-radius:16px 16px 4px 16px; background:var(--accent-soft); }
@@ -207,10 +213,13 @@ h2 { font-size:16px; font-weight:600; letter-spacing:-.2px; }
 .segmented { padding:4px; border-radius:10px; }
 .segmented button { min-height:35px; padding:8px 12px; font-size:12px; border-radius:8px; }
 .filters { gap:12px; }
-.filters select,.inline-search input { font-size:12px; min-height:40px; }
+.filters select,.inline-search input { font-size:13px; min-height:40px; color:var(--ink); }
 .filters select { padding:8px 12px; background:var(--surface); border:1px solid var(--line); border-radius:9px; }
-.inline-search { border:1px solid var(--line); border-radius:9px; padding:0 12px; gap:8px; }
-.inline-search input { width:150px; max-width:190px; }
+.inline-search { border:1px solid var(--line); border-radius:9px; padding:0 12px; gap:8px; background:var(--surface); min-width:0; }
+.inline-search:focus-within { border-color:var(--accent); outline:2px solid var(--accent); outline-offset:2px; }
+.inline-search input { width:150px; max-width:190px; min-width:0; margin:0; box-shadow:none; }
+.inline-search input:focus,.inline-search input:focus-visible { outline:none; box-shadow:none; }
+.inline-search svg { flex-shrink:0; width:16px; height:16px; }
 .project-grid,.area-grid,.pages-grid { gap:20px; }
 .project-card,.area-card,.page-card { border-radius:16px; padding:24px; }
 .project-card { background:var(--card); }
