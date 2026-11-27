@@ -72,6 +72,12 @@ export function setupShell() {
     if (isOpen()) $('#navigation .nav-item')?.focus();
   });
   backdrop.addEventListener('click', () => close({ restoreFocus: true }));
+  // Buttons in the drawer open a view or a dialog; the drawer gets out of the way.
+  sidebar.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement).closest('button');
+    // Navigation buttons are handled by 'clareza:navigated', which also moves focus to the content.
+    if (button && isOpen() && button.id !== 'areas-toggle' && button.dataset.action !== 'nav') close();
+  });
   skip.addEventListener('click', (event) => {
     event.preventDefault();
     focusContent();

@@ -696,11 +696,23 @@
     width: 100%;
   }
 
+  /* On phones the week is a vertical agenda: one compact block per day. */
   .week-board {
-    grid-template-columns: repeat(7, 78%);
-    margin: 0 -16px;
-    padding: 0 16px 8px;
-    scroll-padding-inline: 16px;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: visible;
+  }
+
+  .day-column {
+    min-height: 0;
+    padding: 10px;
+  }
+
+  .day-column.past:not(:has(.week-task)) {
+    display: none;
+  }
+
+  .day-add {
+    margin-top: 0;
   }
 
   .board {
@@ -721,5 +733,9 @@
 
   .review-footer {
     bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+
+  .bulk-bar > span {
+    flex-basis: 100%;
   }
 }

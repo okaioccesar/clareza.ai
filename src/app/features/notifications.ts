@@ -30,7 +30,9 @@ function safeJSON(raw: string | null): unknown {
 }
 
 export const supported = () => typeof window.Notification === 'function';
-const permission = () => (supported() ? Notification.permission : 'denied');
+/** Result of the last permission request in this session (some browsers report it only through the request). */
+let requested: NotificationPermission | null = null;
+const permission = (): NotificationPermission => (supported() ? (requested ?? Notification.permission) : 'denied');
 
 export function getSettings(): ReminderSettings {
   return settings;
@@ -96,8 +98,9 @@ export function check(now = new Date()) {
 async function enable(on: boolean) {
   if (!on) return updateSettings({ enabled: false });
   if (!supported()) return statusText('Este navegador não oferece notificações.');
+  // Asking again is harmless: when the person blocked notifications, the browser answers "denied" without a prompt.
   let result = permission();
-  if (result === 'default') result = await Notification.requestPermission();
+  if (result !== 'granted') result = requested = await Notification.requestPermission();
   if (result !== 'granted') {
     updateSettings({ enabled: false });
     return statusText('As notificações foram bloqueadas. Libere-as nas configurações do navegador para este site.');

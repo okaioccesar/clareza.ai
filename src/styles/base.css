@@ -93,6 +93,25 @@ body[data-input='keyboard'] :focus-visible {
   outline-offset: 2px;
 }
 
+/* Text fields show focus with their own border and ring instead of an outline. */
+body[data-input]
+  :is(
+    .input,
+    .note,
+    .capture input,
+    .search-field input,
+    .command-input input,
+    .assistant-composer textarea,
+    .document-title,
+    .block-input
+  ):focus-visible {
+  outline: none;
+}
+
+input[type='search']::-webkit-search-cancel-button {
+  display: none;
+}
+
 .sr-only {
   position: absolute !important;
   width: 1px;

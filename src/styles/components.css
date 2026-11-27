@@ -316,13 +316,21 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* Label text (and an optional hint) on the first line; the control takes the full width below. */
 .field {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   gap: 6px;
   min-width: 0;
   color: var(--text-2);
   font-size: 0.84rem;
   font-weight: 550;
+}
+
+.field > :is(.input, .picker, .date-row, small, select, div) {
+  flex: 1 0 100%;
+  min-width: 0;
 }
 
 .optional {
@@ -694,7 +702,6 @@ textarea.input,
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
-  text-transform: capitalize;
 }
 
 .calendar-heading strong {
@@ -796,6 +803,7 @@ textarea.input,
 
 .section-heading {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;

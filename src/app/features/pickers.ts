@@ -141,7 +141,8 @@ function enhanceDate(input: HTMLInputElement) {
     const heading = document.createElement('div');
     heading.className = 'calendar-heading';
     const title = document.createElement('strong');
-    title.textContent = month.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    const label = month.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    title.textContent = label.charAt(0).toUpperCase() + label.slice(1);
     const move = (offset: number) => {
       month.setMonth(month.getMonth() + offset);
       draw();
