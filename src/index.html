@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content"
+    />
+    <meta name="theme-color" content="#f7f6f3" />
+    <meta name="description" content="%BRAND% — %TAGLINE%" />
+    <title>%BRAND%</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&family=Inter:wght@400..650&display=swap"
+    />
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <!-- Shown until the session is restored. -->
+    <section id="session-loading" class="session-loading" role="status" aria-live="polite">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <p>Preparando seu espaço…</p>
+      <noscript>Ative o JavaScript para acessar sua conta.</noscript>
+    </section>
+
+    <!-- Landing and sign-in. The account dialog is moved into #login-auth-slot while signed out. -->
+    <section id="login-landing" class="landing" hidden aria-label="Bem-vindo ao %BRAND%">
+      <div class="landing-story">
+        <div class="landing-top">
+          <a class="brand" href="/" aria-label="%BRAND%, início"
+            ><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">%BRAND%</span></a
+          >
+          <div class="theme-switch" role="group" aria-label="Aparência">
+            <button
+              type="button"
+              data-theme-choice="light"
+              aria-label="Tema claro"
+              aria-pressed="false"
+              title="Tema claro"
+            >
+              <span data-icon="sun"></span>
+            </button>
+            <button
+              type="button"
+              data-theme-choice="dark"
+              aria-label="Tema escuro"
+              aria-pressed="false"
+              title="Tema escuro"
+            >
+              <span data-icon="moon"></span>
+            </button>
+          </div>
+        </div>
+        <div class="landing-copy">
+          <p class="eyebrow">Menos ruído. Mais direção.</p>
+          <h1>Um lugar para <em>clarear</em> suas ideias.</h1>
+          <p class="lead">
+            Tarefas, projetos e anotações em um só espaço, com lembretes na hora certa e uma revisão semanal para não
+            perder o rumo.
+          </p>
+          <ul class="landing-points">
+            <li>
+              <span data-icon="sun"></span
+              ><span><strong>Seu dia em uma tela.</strong> O que importa hoje, sem distrações.</span>
+            </li>
+            <li>
+              <span data-icon="bell"></span
+              ><span><strong>Lembretes no horário.</strong> Avisos para as tarefas com hora marcada.</span>
+            </li>
+            <li>
+              <span data-icon="sparkle"></span
+              ><span><strong>Revisão da semana.</strong> Feche a semana e escolha três prioridades.</span>
+            </li>
+          </ul>
+        </div>
+        <p class="landing-foot">Seus dados ficam na sua conta e em uma cópia neste navegador.</p>
+      </div>
+      <div class="landing-access">
+        <div id="login-auth-slot"></div>
+        <noscript>Ative o JavaScript para entrar.</noscript>
+      </div>
+    </section>
+
+    <div id="app-shell" class="app-shell" hidden inert>
+      <a class="skip-link" href="#view">Ir para o conteúdo</a>
+
+      <aside id="sidebar" class="sidebar" aria-label="Barra lateral">
+        <div class="sidebar-top">
+          <a class="brand" href="#today" aria-label="%BRAND%, início"
+            ><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">%BRAND%</span></a
+          >
+          <button
+            id="sidebar-collapse"
+            class="icon-button"
+            type="button"
+            aria-label="Recolher barra lateral"
+            aria-expanded="true"
+            title="Recolher barra lateral"
+          >
+            <span data-icon="sidebar"></span>
+          </button>
+        </div>
+        <button id="command-open" class="search-trigger" type="button">
+          <span data-icon="search"></span><span class="label">Buscar</span><kbd>Ctrl K</kbd>
+        </button>
+        <nav id="navigation" class="nav" aria-label="Navegação principal"></nav>
+        <div class="sidebar-section">
+          <div class="sidebar-heading">
+            <button id="areas-toggle" class="sidebar-label" type="button" aria-expanded="true" aria-controls="area-nav">
+              Áreas da vida <span data-icon="down"></span>
+            </button>
+            <button
+              class="icon-button small"
+              type="button"
+              data-action="new-area"
+              aria-label="Nova área"
+              title="Nova área"
+            >
+              <span data-icon="plus"></span>
+            </button>
+          </div>
+          <div id="area-nav" class="nav"></div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-heading"><span class="sidebar-label">Favoritos</span></div>
+          <div id="page-nav" class="nav"></div>
+        </div>
+        <div class="sidebar-bottom">
+          <button type="button" class="avatar" id="profile-open" aria-label="Editar meu perfil" title="Meu perfil">
+            EU
+          </button>
+          <div class="profile-text">
+            <span id="profile-name">Espaço pessoal</span><small id="profile-status">Salvo neste navegador</small>
+          </div>
+          <button id="account-open" class="icon-button" type="button" title="Conta e preferências">
+            <span data-icon="settings"></span
+            ><span id="account-button-label" class="sr-only">Conta e preferências</span>
+          </button>
+        </div>
+      </aside>
+      <button
+        id="sidebar-backdrop"
+        class="sidebar-backdrop"
+        type="button"
+        aria-label="Fechar menu"
+        tabindex="-1"
+        hidden
+      ></button>
+
+      <main class="main">
+        <header class="topbar">
+          <button
+            id="mobile-menu"
+            class="icon-button mobile-only"
+            type="button"
+            aria-label="Abrir menu"
+            aria-expanded="false"
+          >
+            <span data-icon="menu"></span>
+          </button>
+          <div class="breadcrumb">
+            <span class="breadcrumb-root">Meu espaço</span><span class="breadcrumb-sep" aria-hidden="true">/</span
+            ><strong id="breadcrumb">Hoje</strong>
+          </div>
+          <div class="topbar-actions">
+            <span id="save-status" class="save-status" role="status">Salvo localmente</span>
+            <div class="theme-switch" role="group" aria-label="Aparência">
+              <button
+                type="button"
+                data-theme-choice="light"
+                aria-label="Tema claro"
+                aria-pressed="false"
+                title="Tema claro"
+              >
+                <span data-icon="sun"></span>
+              </button>
+              <button
+                type="button"
+                data-theme-choice="dark"
+                aria-label="Tema escuro"
+                aria-pressed="false"
+                title="Tema escuro"
+              >
+                <span data-icon="moon"></span>
+              </button>
+            </div>
+            <button id="assistant-open" class="button ghost" type="button" aria-label="Abrir assistente de tarefas">
+              <span data-icon="sparkle"></span><span class="label">Assistente</span>
+            </button>
+            <button
+              id="quick-create"
+              class="button primary"
+              type="button"
+              data-action="new-task"
+              aria-label="Criar tarefa"
+            >
+              <span data-icon="plus"></span><span class="label">Nova tarefa</span>
+            </button>
+          </div>
+        </header>
+        <div id="sync-banner" class="sync-banner" role="status" hidden>
+          <span id="sync-banner-text"></span
+          ><button id="sync-banner-action" class="text-button" type="button">Ver minha conta</button>
+        </div>
+        <div id="view" class="view" tabindex="-1"></div>
+      </main>
+
+      <nav id="tabbar" class="tabbar" aria-label="Navegação rápida"></nav>
+
+      <dialog id="entity-dialog" class="dialog">
+        <form id="entity-form" novalidate>
+          <div class="dialog-top">
+            <span id="entity-kind" class="eyebrow"></span
+            ><button type="button" class="icon-button" data-close aria-label="Fechar">
+              <span data-icon="x"></span>
+            </button>
+          </div>
+          <h2 id="entity-title"></h2>
+          <div id="entity-fields" class="fields"></div>
+          <div class="dialog-actions">
+            <button type="button" id="entity-delete" class="text-button danger" hidden>Excluir</button>
+            <span class="spacer"></span>
+            <button type="button" class="button secondary" data-close>Cancelar</button>
+            <button type="submit" class="button primary">Salvar</button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog id="command-dialog" class="dialog command-dialog" aria-label="Busca">
+        <div class="command-input">
+          <span data-icon="search"></span
+          ><input
+            id="command-input"
+            type="search"
+            placeholder="Buscar tarefas, projetos, páginas e áreas…"
+            aria-label="Busca global"
+            autocomplete="off"
+          /><button type="button" class="icon-button" data-close aria-label="Fechar busca">
+            <span data-icon="x"></span>
+          </button>
+        </div>
+        <div id="command-results" class="command-results"></div>
+        <div class="command-footer">
+          <span><kbd>↵</kbd> abrir</span><span><kbd>Esc</kbd> fechar</span>
+        </div>
+      </dialog>
+
+      <dialog id="settings-dialog" class="dialog" aria-labelledby="settings-title">
+        <div class="dialog-top">
+          <span class="eyebrow">Preferências</span
+          ><button type="button" class="icon-button" data-close aria-label="Fechar preferências">
+            <span data-icon="x"></span>
+          </button>
+        </div>
+        <h2 id="settings-title">Seu espaço, do seu jeito.</h2>
+        <section class="settings-section">
+          <label class="setting-row" for="theme-preference"
+            ><span><strong>Aparência</strong><small>Escolha um tema ou acompanhe o dispositivo.</small></span
+            ><select id="theme-preference" data-theme-picker>
+              <option value="system">Sistema</option>
+              <option value="light">Claro</option>
+              <option value="dark">Escuro</option>
+            </select></label
+          >
+        </section>
+        <section class="settings-section" id="notification-settings" aria-labelledby="notification-heading">
+          <h3 id="notification-heading">Notificações</h3>
+          <p id="notification-status" class="small muted" role="status"></p>
+          <label class="setting-row"
+            ><span
+              ><strong>Ativar lembretes neste dispositivo</strong
+              ><small>Funcionam enquanto o app estiver aberto em uma aba.</small></span
+            ><input type="checkbox" class="switch" id="notify-enabled"
+          /></label>
+          <div id="notify-options" class="settings-options">
+            <label class="setting-row"
+              ><span><strong>Tarefas com horário</strong><small>Aviso antes do horário marcado.</small></span
+              ><input type="checkbox" class="switch" id="notify-tasks"
+            /></label>
+            <label class="setting-row"
+              ><span><strong>Antecedência</strong></span
+              ><select id="notify-lead">
+                <option value="0">No horário</option>
+                <option value="5">5 minutos antes</option>
+                <option value="15">15 minutos antes</option>
+                <option value="30">30 minutos antes</option>
+                <option value="60">1 hora antes</option>
+              </select></label
+            >
+            <label class="setting-row"
+              ><span><strong>Resumo do dia</strong><small>Quantas tarefas você tem e por onde começar.</small></span
+              ><input type="checkbox" class="switch" id="notify-summary"
+            /></label>
+            <label class="setting-row"
+              ><span><strong>Horário do resumo</strong></span
+              ><input type="time" id="notify-summary-time" class="input compact"
+            /></label>
+            <button type="button" class="text-button" id="notify-test">Enviar notificação de teste</button>
+          </div>
+        </section>
+        <section class="settings-section">
+          <h3>Cópia de segurança</h3>
+          <p class="small muted">
+            Exporte tarefas, projetos e páginas em um arquivo. A importação adiciona registros e preserva os existentes.
+          </p>
+          <div class="button-row">
+            <button type="button" class="button secondary" id="export">
+              <span data-icon="download"></span>Exportar</button
+            ><button type="button" class="button secondary" id="import"><span data-icon="upload"></span>Importar</button
+            ><input id="import-file" type="file" accept="application/json,.json" hidden />
+          </div>
+        </section>
+      </dialog>
+
+      <dialog id="profile-dialog" class="dialog" aria-labelledby="profile-title">
+        <form id="profile-form">
+          <div class="dialog-top">
+            <span class="eyebrow">Perfil</span
+            ><button type="button" class="icon-button" data-close aria-label="Fechar perfil">
+              <span data-icon="x"></span>
+            </button>
+          </div>
+          <h2 id="profile-title">Meu perfil</h2>
+          <div class="fields">
+            <label class="field"
+              >Nome de exibição<input
+                id="profile-display-name"
+                class="input"
+                required
+                maxlength="80"
+                autocomplete="nickname"
+            /></label>
+            <label class="field"
+              >Sobre você<textarea
+                id="profile-bio"
+                class="input"
+                maxlength="280"
+                rows="3"
+                placeholder="Conte um pouco sobre você…"
+              ></textarea>
+            </label>
+            <label class="field"
+              >Link da foto<input
+                id="profile-photo"
+                class="input"
+                type="url"
+                maxlength="2048"
+                placeholder="https://…"
+              /><small class="muted">Use um link HTTPS. Deixe vazio para usar suas iniciais.</small></label
+            >
+          </div>
+          <p id="profile-message" class="form-message" role="status"></p>
+          <div class="dialog-actions">
+            <span class="spacer"></span
+            ><button type="submit" id="profile-save" class="button primary">Salvar perfil</button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+
+    <dialog id="account-dialog" class="dialog account-dialog" aria-labelledby="account-title">
+      <div class="dialog-top">
+        <span class="eyebrow">Sua conta</span
+        ><button type="button" class="icon-button" data-close aria-label="Fechar conta">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <h2 id="account-title">Entre no seu espaço.</h2>
+      <p class="account-intro muted">Suas tarefas ficam guardadas na conta e sincronizadas entre dispositivos.</p>
+      <p id="account-message" class="form-message" role="status" aria-live="polite"></p>
+      <section id="account-signed-in" hidden>
+        <div class="account-card">
+          <span data-icon="user"></span>
+          <div>
+            <p class="account-email" id="account-email"></p>
+            <p id="account-sync-description" class="small muted"></p>
+          </div>
+        </div>
+        <div class="button-row">
+          <button type="button" class="button secondary" data-account-action="sync">Sincronizar agora</button
+          ><button id="settings-open" class="button secondary" type="button">Preferências</button>
+        </div>
+        <section id="account-import" class="account-section" hidden>
+          <h3>Trazer o que já está aqui</h3>
+          <p id="account-import-description" class="small muted"></p>
+          <button type="button" class="button secondary" data-account-action="import">
+            Importar dados deste navegador
+          </button>
+          <p class="small muted">A cópia local é mantida. Registros com o mesmo identificador são preservados.</p>
+        </section>
+        <section id="account-conflict" class="account-section warning" hidden>
+          <h3>Encontramos duas versões</h3>
+          <p class="small muted">
+            Outro dispositivo salvou alterações. Escolha qual versão continuar usando; guardamos uma cópia da versão
+            substituída neste navegador.
+          </p>
+          <div class="button-row">
+            <button type="button" class="button primary" data-account-action="use-remote">Usar versão da conta</button
+            ><button type="button" class="button secondary" data-account-action="use-local">Usar minha versão</button>
+          </div>
+        </section>
+        <section id="account-backup" class="account-section" hidden>
+          <button type="button" class="text-button" data-account-action="backup">Baixar cópia anterior guardada</button>
+        </section>
+        <div class="account-footer">
+          <button type="button" class="text-button" data-account-action="export">Exportar este espaço</button
+          ><button type="button" class="text-button" data-account-action="reconnect">Entrar novamente</button
+          ><button type="button" class="text-button danger" data-account-action="logout">Sair</button>
+        </div>
+      </section>
+      <section id="account-auth">
+        <div id="account-google-section">
+          <button
+            type="button"
+            id="account-google"
+            class="button secondary block google"
+            aria-describedby="account-google-status"
+            disabled
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                fill="#4285F4"
+                d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.24c1.9-1.75 2.98-4.33 2.98-7.36Z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 22c2.7 0 4.96-.9 6.62-2.41l-3.24-2.51c-.9.6-2.06.97-3.38.97-2.6 0-4.8-1.76-5.59-4.12H3.07v2.59A10 10 0 0 0 12 22Z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M6.41 13.93A6 6 0 0 1 6.1 12c0-.67.11-1.32.31-1.93V7.48H3.07A10 10 0 0 0 2 12c0 1.61.38 3.14 1.07 4.52l3.34-2.59Z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.95c1.47 0 2.79.5 3.83 1.5l2.87-2.88A9.63 9.63 0 0 0 12 2a10 10 0 0 0-8.93 5.48l3.34 2.59C7.2 7.71 9.4 5.95 12 5.95Z"
+              /></svg
+            ><span>Continuar com Google</span>
+          </button>
+          <p id="account-google-status" class="small muted" role="status"></p>
+          <div class="divider"><span>ou use seu e-mail</span></div>
+        </div>
+        <div class="segmented block" id="account-tabs" role="group" aria-label="Acesso à conta">
+          <button type="button" data-auth-mode="signin" aria-pressed="true">Entrar</button
+          ><button type="button" data-auth-mode="signup" aria-pressed="false">Criar conta</button>
+        </div>
+        <form id="account-form" class="fields">
+          <label id="account-email-label" class="field"
+            >E-mail<input
+              id="account-email-input"
+              class="input"
+              name="email"
+              type="email"
+              maxlength="254"
+              autocomplete="username"
+              required
+          /></label>
+          <label id="account-password-label" class="field"
+            ><span>Senha</span
+            ><input
+              id="account-password"
+              class="input"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              maxlength="128"
+          /></label>
+          <button type="submit" class="button primary block" id="account-submit">Entrar</button>
+          <button type="button" class="text-button center" id="account-forgot">Esqueci minha senha</button>
+        </form>
+        <div id="local-mode" hidden>
+          <div class="divider"><span>desenvolvimento</span></div>
+          <button type="button" class="button ghost block" id="local-mode-start">
+            Continuar sem conta (modo local)
+          </button>
+        </div>
+      </section>
+    </dialog>
+
+    <dialog id="assistant-dialog" class="dialog assistant-dialog" aria-labelledby="assistant-title">
+      <div class="dialog-top">
+        <div>
+          <span class="eyebrow">Assistente</span>
+          <h2 id="assistant-title">Como posso ajudar?</h2>
+        </div>
+        <button type="button" class="icon-button" data-close aria-label="Fechar assistente">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <p id="assistant-availability" class="small muted" role="status"></p>
+      <div
+        id="assistant-messages"
+        class="assistant-messages"
+        role="log"
+        aria-label="Conversa com o assistente"
+        aria-live="polite"
+      ></div>
+      <div class="assistant-suggestions">
+        <button type="button" class="chip" data-chat-prompt="Organize meu dia">Organizar meu dia</button
+        ><button type="button" class="chip" data-chat-prompt="Planeje minha semana">Planejar a semana</button
+        ><button type="button" class="chip" data-chat-prompt="Resumo das minhas tarefas">Resumo</button>
+      </div>
+      <form id="assistant-form" class="assistant-composer">
+        <label class="sr-only" for="assistant-input">Mensagem para o assistente</label>
+        <textarea
+          id="assistant-input"
+          rows="2"
+          maxlength="4000"
+          placeholder="Ex.: Crie revisar proposta amanhã com prioridade alta"
+        ></textarea>
+        <div class="composer-bar">
+          <span class="small muted">Enter envia · Shift + Enter quebra a linha</span
+          ><button type="button" class="text-button" id="assistant-clear">Limpar</button
+          ><button type="button" class="text-button" id="assistant-stop" hidden>Parar</button
+          ><button type="submit" class="button primary" id="assistant-send">Enviar</button>
+        </div>
+        <p class="small muted assistant-privacy">
+          Com a IA online, sua mensagem e os títulos, prazos e prioridades das tarefas abertas são enviados à OpenAI.
+          Notas e páginas não.
+        </p>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" hidden><span></span><button type="button" hidden>Desfazer</button></div>
+
+    <script src="cloud-client.js" defer></script>
+    <script src="app.js" defer></script>
+  </body>
+</html>

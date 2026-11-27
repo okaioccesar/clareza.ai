@@ -1,36 +1,30 @@
-# Próximos passos do clarity.ai
+# Próximos passos
 
-Propostas para priorização. Estas funcionalidades ainda não foram implementadas.
-O foco continua sendo organizar tarefas sem acrescentar mais uma tela para cada ideia.
+Concluído nesta versão: **revisão semanal guiada** e **lembretes com horário**.
 
-## 1. Revisão semanal guiada
+## 1. Aplicativo para Android e iOS
 
-Um botão na visão da semana abre uma revisão curta: o que foi concluído, o que ficou pendente e quais são as três prioridades seguintes. Tarefas atrasadas podem ser reagendadas em conjunto, com prévia e opção de desfazer. Não reagendar automaticamente.
+Empacotar a versão web com Capacitor. O núcleo (`src/core/`) não depende do navegador, então as mesmas regras servem ao app.
 
-**Valor:** criar um momento de responsabilidade sem transformar o painel em uma lista de cobranças.
-**Primeira entrega:** aproveitar tarefas e datas existentes; guardar apenas o resumo e as prioridades da revisão.
+- **Notificações nativas:** trocar o envio do navegador por `@capacitor/local-notifications`, agendando os lembretes calculados por `src/core/reminders.ts`. Assim os avisos chegam com o app fechado.
+- **Antes da publicação:** novo nome e ícone, política de privacidade, exclusão de conta dentro do app (exigida pela Apple) e login com Google configurado para os esquemas de URL do app.
 
 ## 2. Sessão de foco ligada a uma tarefa
 
-A ação “Focar” nos detalhes de uma tarefa inicia um temporizador discreto. Pausar, retomar ou encerrar ficam no mesmo controle. Concluir o tempo não conclui a tarefa automaticamente.
-
-**Valor:** aproximar planejamento e execução.
-**Primeira entrega:** calcular o tempo pelo horário de término para continuar correto após trocar de aba; não exigir notificações do navegador.
+A ação "Focar" nos detalhes de uma tarefa inicia um temporizador discreto. Pausar, retomar ou encerrar ficam no mesmo controle. Concluir o tempo não conclui a tarefa automaticamente. Calcular o tempo pelo horário de término, para continuar correto ao trocar de aba.
 
 ## 3. Caixa de entrada com sugestões do assistente
 
-Permitir capturar várias ideias em uma mensagem. O assistente sugere títulos, datas e áreas em uma prévia editável. Apenas itens selecionados viram tarefas depois da confirmação.
-
-**Valor:** reduzir o esforço de organizar uma lista solta.
-**Primeira entrega:** estender o fluxo de propostas já existente, com tratamento explícito de datas ambíguas e da indisponibilidade da IA.
+Capturar várias ideias em uma mensagem; o assistente sugere títulos, datas e áreas em uma prévia editável. Apenas itens selecionados viram tarefas. O fluxo de propostas já existe.
 
 ## 4. Calendário com espaço disponível
 
-Mostrar compromissos e tarefas na mesma visão semanal para evitar planejar mais do que cabe no dia. Começar com leitura opcional do Google Calendar; criar ou alterar compromissos seria uma etapa posterior.
+Mostrar compromissos e tarefas na mesma visão semanal. Começar com leitura opcional do Google Calendar, que exige consentimento específico.
 
-**Valor:** planejar considerando os compromissos reais.
-**Dependência:** consentimento específico para Calendar. Entrar com Google não concede acesso ao calendário.
+## 5. Lembretes com o app fechado na web
+
+Web Push com chaves VAPID, inscrições salvas no Supabase e um agendador no servidor. Só vale a pena se a versão web continuar sendo usada além do app.
 
 ## Critério para manter a interface leve
 
-Cada recurso entra no contexto em que será usado: revisão na semana, foco na tarefa, captura na entrada e compromissos no calendário. Evitar novos cartões permanentes, contadores redundantes e novas seções no menu sem necessidade. Minha prioridade sugerida é começar pela revisão semanal.
+Cada recurso entra no contexto em que é usado: revisão na semana, foco na tarefa, captura na entrada e compromissos no calendário. Evitar novos cartões permanentes e novas seções no menu sem necessidade.
