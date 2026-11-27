@@ -6,7 +6,7 @@ Projeto `clareza`, identificado por `prj_dT2lPV1cyKj9LnUGX2FluUl426JR`. O domín
 
 A liberação foi verificada sem cookies ou credenciais: a raiz de produção retornou HTTP 200 com o HTML do aplicativo; `/api/chat` retornou HTTP 200 com `configured: false`; o endereço único do deployment redirecionou para autenticação. Os relatos de inspeção bloqueada nas publicações antigas, abaixo, são históricos.
 
-A interface usa `dist/`; as funções TypeScript `api/config.ts` e `api/workspace.ts` atendem contas e sincronização, e `api/chat.js` atende a IA online. O cliente e o servidor usam `@supabase/supabase-js`. A navegação usa fragmentos (`/#space`, `/#today`), portanto não necessita de regra de redirecionamento de rotas.
+O código da interface fica em `src/` e o build gera `dist/`; as funções TypeScript `api/config.ts` e `api/workspace.ts` atendem contas e sincronização, e `api/chat.ts` atende a IA online. O cliente e o servidor usam `@supabase/supabase-js`. A navegação usa fragmentos (`/#space`, `/#today`), portanto não necessita de regra de redirecionamento de rotas.
 
 ## Assistente e aparência
 

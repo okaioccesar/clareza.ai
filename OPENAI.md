@@ -1,6 +1,6 @@
 # Conversa e organização com OpenAI
 
-O assistente chama a API da OpenAI diretamente pelo servidor (`api/chat.js`). A chave nunca é enviada ao navegador. O login é verificado pelo Supabase antes da chamada ao modelo.
+O assistente chama a API da OpenAI diretamente pelo servidor (`api/chat.ts`). A chave nunca é enviada ao navegador. O login é verificado pelo Supabase antes da chamada ao modelo.
 
 ## Ativar
 
