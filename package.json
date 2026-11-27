@@ -1,13 +1,17 @@
 {
   "name": "clareza-ai",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
+  "type": "module",
   "description": "Tarefas, projetos e ideias em um espaço pessoal.",
   "scripts": {
-    "build": "node scripts/build.cjs",
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "preview": "node scripts/preview.mjs",
+    "test": "npm run build && node --test \"test/**/*.test.{ts,js}\"",
     "typecheck": "tsc --noEmit",
-    "test": "node --test",
-    "preview": "node preview.cjs"
+    "format": "prettier --write src api server test scripts",
+    "check": "npm run typecheck && npm test"
   },
   "engines": {
     "node": "24.x"
@@ -16,6 +20,7 @@
     "@types/node": "24.19.2",
     "esbuild": "0.28.2",
     "jsdom": "30.1.3",
+    "prettier": "3.10.1",
     "typescript": "7.0.2"
   },
   "dependencies": {
